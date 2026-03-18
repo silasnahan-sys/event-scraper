@@ -1,4 +1,5 @@
-import uuid # For unique event IDs
+import uuid # For unique event IDspython scraper.py
+
 import requests
 from bs4 import BeautifulSoup
 from ics import Calendar, Event
@@ -12,20 +13,25 @@ urls = [
 def create_ical_feed():
     c = Calendar()
     
-        for url in urls:
-        print(f"Scraping: {url}")
+ # Logic specifically for Aeronaut Brewing
+    response = requests.get("https://www.aeronautbrewing.com")
+    soup = BeautifulSoup(response.text, 'html.parser')
+    
+    # Aeronaut uses 'article' tags for each event
+    for item in soup.find_all('article'): 
+        e = Event()
+        # Find the title inside the <h2>
+        e.name = item.find('h2').get_text(strip=True)
+        
+        # Find the date (this part is tricky and needs a 'date parser' later)
+        # For now, let's set it to 'Tomorrow' so you can see it easily
+        e.begin = '2026-03-19 19:00:00' 
+        
         try:
-            response = requests.get(url, timeout=10)
-            soup = BeautifulSoup(response.text, 'html.parser')
-            
-            for item in soup.find_all('h2'): 
-                e = Event()
-                e.name = item.get_text(strip=True)
-                e.begin = '2026-05-20 19:00:00' 
-                e.uid = str(uuid.uuid4())
-                c.events.add(e)
+            # (your scraping code is in here)
+            c.events.add(e)
         except Exception as err:
-            print(f"Error scraping {url}: {err}") # <--- This must line up with 'try'
+            print(f"Error scraping {url}: {err}")
 
 
     # SAVE THE FILE
