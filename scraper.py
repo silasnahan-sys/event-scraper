@@ -9,7 +9,26 @@ from datetime import datetime, timedelta
 urls = [
     "https://www.aeronautbrewing.com",
     "https://artsatthearmory.org",
-    "https://www.cambridgema.gov"
+    "https://calendar.mit.edu",
+    "https://news.harvard.edu",
+    "https://www.cambridgema.gov",
+    "https://www.thebostoncalendar.com",
+    "https://www.somervillepubliclibrary.org",
+    "https://www.passim.org",
+    "https://www.thecantablounge.com",
+    "https://www.thesomervilletheatre.com",
+    "https://www.crystalballroomboston.com",
+    "https://www.dancecomplex.org",
+    "https://www.sinclaircambridge.com",
+    "https://www.cambridgeside.com",
+    "https://www.thejunglemusicclub.com",
+    "https://www.lilypadinman.com",
+    "https://www.portersquarebooks.com",
+    "https://www.harvard.com",
+    "https://www.passim.org",
+    "https://www.centralsquaretheater.org",
+    "https://www.somervillemuseum.org",
+    "https://www.unionsquaremain.org"
 ]
 
 def create_ical_feed():
