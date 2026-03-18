@@ -1,292 +1,295 @@
 BEGIN:VCALENDAR
+X-WR-CALNAME:Indie Community Events
+X-WR-TIMEZONE:America/New_York
+METHOD:PUBLISH
 VERSION:2.0
 PRODID:ics.py - http://git.io/lLljaA
 BEGIN:VEVENT
 DESCRIPTION:Source: https://www.cambridgema.gov
 DTSTART:20260319T190000Z
-SUMMARY:Subscribe to Daily Updates
-UID:batch1-f5583fc7-1265-42e7-90a8-efa9c286c8d6
+SUMMARY:Hours of Service
+UID:event-99e50321-a2d3-43d3-bb74-9c3c279bd489
 END:VEVENT
 BEGIN:VEVENT
 DESCRIPTION:Source: https://www.cambridgema.gov
 DTSTART:20260319T190000Z
-SUMMARY:Service Requests
-UID:batch1-50657b63-a474-459e-9627-ba6ec0254b06
+SUMMARY:The Government Operations\, Rules\, and Claims Committee
+UID:event-48175e92-3d0a-44a2-bd26-df7ffc53297e
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:The Government Operations\, Rules\, and Claims Committee
+UID:event-884447d0-14fd-48ad-8e9e-10f357311dc5
 END:VEVENT
 BEGIN:VEVENT
 DESCRIPTION:Source: https://www.cambridgema.gov
 DTSTART:20260319T190000Z
 SUMMARY:Virtual Meeting of the Curriculum & Achievement Subcommittee
-UID:batch1-25eca104-c388-4fa1-97ea-379172fefefe
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:Cambridge Seeking Community Members for New Commission Vacancies: February-March 2026
-UID:batch1-4ebebcb8-ef47-4d28-8a3a-e6e5d9cd4c0a
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://artsatthearmory.org
-DTSTART:20260319T190000Z
-SUMMARY:Give to the Center for the Arts at the Armory
-UID:batch1-3a5ac4f8-76d3-416f-b05c-02ea9a158d49
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:Regular City Council Meeting
-UID:batch1-752383ed-01be-4735-b852-824b826a5ce3
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:Regular City Council Meeting
-UID:batch1-c5526f3b-c35b-4bea-93e7-6ec3806c39cd
+UID:event-f8eb9abc-74ca-44e3-a727-ae8bd1cebd33
 END:VEVENT
 BEGIN:VEVENT
 DESCRIPTION:Source: https://artsatthearmory.org
 DTSTART:20260319T190000Z
 SUMMARY:The Center for the Arts at the Armory
-UID:batch1-6fde7783-3696-4c56-84f3-a5ae533ea034
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:LGBTQ+ Commission Public Health & Safety Working Group Meeting
-UID:batch1-74b31540-47cd-4492-adf5-678189a410c3
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:The Government Operations\, Rules\, and Claims Committee
-UID:batch1-65f1a996-433d-4c64-98eb-4fa5e69e5706
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:Virtual Meeting of the Buildings & Grounds Subcommittee
-UID:batch1-9e3fe976-b963-46cd-b678-5a23d66ef121
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:CANCELLED -Avon Hill NCD Commission Meeting
-UID:batch1-b080a20e-bf64-4b4d-bd90-8c9ad5c971f5
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:Cambridge Earns Highest Credit Rating Possible from Rating Agencies For the 27th Consecutive Year
-UID:batch1-9028f177-d6a4-45a2-a1a8-c0d4f791ad96
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:Helpful Resources
-UID:batch1-3d593631-e9d3-4888-9273-8c90b7391e2e
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:Request
-UID:batch1-8ab25423-01c0-43cf-975a-4330b958ea5a
+UID:event-38652c2c-46cf-4377-aa17-3d18baadd320
 END:VEVENT
 BEGIN:VEVENT
 DESCRIPTION:Source: https://www.cambridgema.gov
 DTSTART:20260319T190000Z
 SUMMARY:Special Board Meeting of the Cambridge Housing Authority
-UID:batch1-05fa999d-4e68-4d1d-8a7c-2a42db05ee23
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:Contact City Hall
-UID:batch1-e4bc50f6-11d9-4853-884a-cfd759a2b2c2
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:Fresh Pond Master Plan Advisory Board March Meeting
-UID:batch1-a0f81eb5-3964-4073-9042-287f6cdaf65b
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:Council on Aging Extends Programming at Russell Youth and Community Center
-UID:batch1-ef2f8f3a-e175-4e98-b898-12687fa4f305
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:Virtual Meeting of the Buildings & Grounds Subcommittee
-UID:batch1-a151e689-a6e6-4d14-8548-58ab315e9038
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:The Government Operations\, Rules\, and Claims Committee
-UID:batch1-e67ca8b0-cff8-4fc4-8e68-e2ebec5941de
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:DCR Traffic Advisory: Overnight Closures on Storrow Drive and Soldiers Field Road (March 15–17) May Affect Travel Near Memorial Drive
-UID:batch1-03b3c46e-4d1f-456b-8668-3440f7831432
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:CANCELLED -Avon Hill NCD Commission Meeting
-UID:batch1-015456c5-1857-4cec-8a63-142423d1fe26
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:The Government Operations\, Rules\, and Claims Committee
-UID:batch1-7e52a2e7-7d51-4d3c-bef8-38b016c6d7ae
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:Contact
-UID:batch1-cc5e3fc8-2b20-4ff6-beec-da09c67392d9
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:Virtual Meeting of the Buildings & Grounds Subcommittee
-UID:batch1-58051a44-774d-48ea-8010-871410418151
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:View OurDigital Publications
-UID:batch1-85f51514-d84a-4bd8-b9bb-65b46f9c3358
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:City Releases New Biking Report Showing Record Trips by Bike and Improving Safety in Cambridge
-UID:batch1-04268eba-9d19-478d-b95f-50561a6b4262
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:Look Up
-UID:batch1-b5cf915d-384f-4220-88d9-9aeabf567d35
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:Sign Up For
-UID:batch1-b75c5d31-456d-406c-ab55-aef0578878e0
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:Renewed Cambridge Women’s Heritage Project Brings Women’s Contributions Into Focus
-UID:batch1-77d5e13d-71e5-4861-ae54-a74a5ca92aa4
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:Cambridge Preschool Program to Accept Additional Applications for 2026-2027 School Year through April 13
-UID:batch1-0ddb221f-ff67-4909-ba78-b2403b960e92
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:Renew Your Cambridge Parking Permit
-UID:batch1-e3bb2739-5c80-4fa3-b905-379e698fd642
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:Hours of Service
-UID:batch1-198a1093-6b95-4a0b-ae1a-682a9ca28256
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:Special Board Meeting of the Cambridge Housing Authority
-UID:batch1-cb142787-c5e7-446f-b80d-19b787478ef3
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:Cambridge City Manager Signs Executive Order and Joins City Council and Metro Mayors Coalition in Standing Together to Protect Residents and Stand Against Illegal ICE Actions
-UID:batch1-f73326b4-db47-479c-8ca7-721dc871f2c9
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:Commonly Requested
-UID:batch1-eb58df5f-bf1f-497d-bc0a-5045ca15f596
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://artsatthearmory.org
-DTSTART:20260319T190000Z
-SUMMARY:What’s Happening at Arts at the Armory
-UID:batch1-cb1e2763-6f54-496c-a6fb-83e77004cd60
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:Conservation Commission Meeting
-UID:batch1-0932d4a9-f74a-411b-a7c0-6568f3899068
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:Special Board Meeting of the Cambridge Housing Authority
-UID:batch1-557c2349-6a37-4d31-9641-62f42ab3afe3
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:How can we help?
-UID:batch1-4e5b2753-d239-4283-a6ac-01f4cb957f5a
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:Commonwealth Elevates Cambridge and Northeast Region To Critical Drought Status
-UID:batch1-4dae6efa-c655-4972-a003-a56afd7b1fad
-END:VEVENT
-BEGIN:VEVENT
-DESCRIPTION:Source: https://www.cambridgema.gov
-DTSTART:20260319T190000Z
-SUMMARY:Apply For
-UID:batch1-a7b2d6b7-23e1-4822-bc85-8df4ac44bd1a
+UID:event-cf4c5669-a6e1-4a0e-982d-c5afa32bcfc8
 END:VEVENT
 BEGIN:VEVENT
 DESCRIPTION:Source: https://www.cambridgema.gov
 DTSTART:20260319T190000Z
 SUMMARY:Coming Up
-UID:batch1-9fcd44fe-3319-450b-9c7a-e1c4a0281b90
+UID:event-f036dac9-6cdf-4e28-964f-c12167421ce4
 END:VEVENT
 BEGIN:VEVENT
 DESCRIPTION:Source: https://www.cambridgema.gov
 DTSTART:20260319T190000Z
-SUMMARY:Submit
-UID:batch1-6ba031d6-508d-4db1-8690-64a876c70a23
+SUMMARY:Apply For
+UID:event-570eb746-3d6c-4b6f-98e5-8e0ed10d9ae1
 END:VEVENT
 BEGIN:VEVENT
 DESCRIPTION:Source: https://www.cambridgema.gov
 DTSTART:20260319T190000Z
-SUMMARY:Fresh Pond Master Plan Advisory Board March Meeting
-UID:batch1-eca80c89-f683-4b5b-9472-fbb4609d3306
+SUMMARY:Renew Your Cambridge Parking Permit
+UID:event-246394a9-b847-424f-be27-99e99b7995b5
 END:VEVENT
 BEGIN:VEVENT
 DESCRIPTION:Source: https://www.cambridgema.gov
 DTSTART:20260319T190000Z
-SUMMARY:Virtual Meeting of the Curriculum & Achievement Subcommittee
-UID:batch1-07efa8f7-326e-4e41-85cf-17374dfeeac0
+SUMMARY:Request
+UID:event-9edfccd1-11f1-4002-bf09-d8b422428c21
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://artsatthearmory.org
+DTSTART:20260319T190000Z
+SUMMARY:What’s Happening at Arts at the Armory
+UID:event-c9986a17-ba0b-40ac-a2ed-addfe106a2b9
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:The Government Operations\, Rules\, and Claims Committee
+UID:event-9dfb4349-9b79-4e49-a00d-8d64d3944265
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:Cambridge Preschool Program to Accept Additional Applications for 2026-2027 School Year through April 13
+UID:event-1d7d6cfa-b8a0-4979-b303-f25760f1aeac
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:Conservation Commission Meeting
+UID:event-914446ce-5124-4431-8f5c-3a5fea01e002
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:Council on Aging Extends Programming at Russell Youth and Community Center
+UID:event-08fb2450-ed45-46ca-9498-3984a3daafbb
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:Cambridge City Manager Signs Executive Order and Joins City Council and Metro Mayors Coalition in Standing Together to Protect Residents and Stand Against Illegal ICE Actions
+UID:event-3d2af424-884a-48d0-872b-50fd23356052
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:Helpful Resources
+UID:event-64a1eaf2-3399-4e17-994c-073aa569f8ad
 END:VEVENT
 BEGIN:VEVENT
 DESCRIPTION:Source: https://www.cambridgema.gov
 DTSTART:20260319T190000Z
 SUMMARY:LGBTQ+ Commission Public Health & Safety Working Group Meeting
-UID:batch1-d8d590fa-9c83-4bc3-a784-bcbd12eb7d07
+UID:event-9f92258e-9875-40af-b788-12ff58cda1a3
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:CANCELLED -Avon Hill NCD Commission Meeting
+UID:event-ecaafd5d-e01c-467f-9de4-a83cc8fb22a2
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:Special Board Meeting of the Cambridge Housing Authority
+UID:event-675e7194-8247-4d8f-90bb-9cbfdbc7e4fb
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:City Releases New Biking Report Showing Record Trips by Bike and Improving Safety in Cambridge
+UID:event-3b34e657-5051-4f31-aeeb-aa7a575fb1de
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:Virtual Meeting of the Curriculum & Achievement Subcommittee
+UID:event-bc62560f-4408-4155-a87a-2835ef7462c5
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:Special Board Meeting of the Cambridge Housing Authority
+UID:event-d1b1dbbf-ab34-4200-8791-fa4ba40bf287
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:How can we help?
+UID:event-9346eb98-234b-4942-a6b3-b160e23801f8
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:Contact City Hall
+UID:event-df656275-2b36-44a9-bbe3-dc4dbafbd501
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:DCR Traffic Advisory: Overnight Closures on Storrow Drive and Soldiers Field Road (March 15–17) May Affect Travel Near Memorial Drive
+UID:event-c6c182fd-8392-4862-9950-0b2261f80254
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:Commonwealth Elevates Cambridge and Northeast Region To Critical Drought Status
+UID:event-d02c2fcb-796d-45ad-bdf7-bfb64c5f863d
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:Virtual Meeting of the Buildings & Grounds Subcommittee
+UID:event-8e114e90-eff4-4bde-8ebf-9795b064a828
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:Regular City Council Meeting
+UID:event-a5c41d28-0fa1-4d6b-bdfe-d4de2a63ec09
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:Renewed Cambridge Women’s Heritage Project Brings Women’s Contributions Into Focus
+UID:event-38442054-755f-446b-b0a9-ca3eca73af83
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:Look Up
+UID:event-18410114-b685-4e90-bb32-51a94f2cc811
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:Regular City Council Meeting
+UID:event-0989c8de-528e-43f3-82f9-c85213fa290c
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:Fresh Pond Master Plan Advisory Board March Meeting
+UID:event-d02e5684-4f93-45c0-b246-4bdf183ff4b2
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:CANCELLED -Avon Hill NCD Commission Meeting
+UID:event-cc79dece-cb16-4d26-8ac5-d9e98a548548
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:Service Requests
+UID:event-24dcd5e7-dd9e-4cfd-9bf7-92cd53ec839e
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:Commonly Requested
+UID:event-545f805f-b032-40a2-bd8c-5d227583bb62
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:Fresh Pond Master Plan Advisory Board March Meeting
+UID:event-64b8793f-1395-4921-b789-c2d27624c974
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:Virtual Meeting of the Buildings & Grounds Subcommittee
+UID:event-9fd09851-2396-4dbf-8bfa-11d2ed6c1858
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:Sign Up For
+UID:event-5428f694-495c-4007-a95c-263d4b590f31
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:View OurDigital Publications
+UID:event-43614248-b574-4b47-ac96-c249d940a348
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:Cambridge Earns Highest Credit Rating Possible from Rating Agencies For the 27th Consecutive Year
+UID:event-fb34f23c-44a2-4b18-ab4c-1605b0b9f45e
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://artsatthearmory.org
+DTSTART:20260319T190000Z
+SUMMARY:Give to the Center for the Arts at the Armory
+UID:event-7e4975b0-fcaf-4c2d-b33b-e6db487d819d
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:Subscribe to Daily Updates
+UID:event-3b6875cd-bc85-44f8-ac2c-dc9c2826b729
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:LGBTQ+ Commission Public Health & Safety Working Group Meeting
+UID:event-3a8661a3-36cf-4ce3-9a96-b337ad284df1
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:Virtual Meeting of the Buildings & Grounds Subcommittee
+UID:event-07a122bb-92dc-4f28-a27f-63fda527c5e5
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:Cambridge Seeking Community Members for New Commission Vacancies: February-March 2026
+UID:event-172b6101-fc6d-4c35-83bd-3dd19217d491
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:Submit
+UID:event-0f2a99cb-06e1-4c96-be92-a461e1d9ece5
+END:VEVENT
+BEGIN:VEVENT
+DESCRIPTION:Source: https://www.cambridgema.gov
+DTSTART:20260319T190000Z
+SUMMARY:Contact
+UID:event-49c054ac-d48d-42f4-9c74-4a6b6b93e24b
 END:VEVENT
 END:VCALENDAR
