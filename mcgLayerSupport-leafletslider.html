@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Leaflet.MarkerCluster.LayerSupport demo page (LeafletSlider)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="screen.css" />
+
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" type="text/css">
+    <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.2/jquery.ui.touch-punch.min.js"></script>
+</head>
+<body>
+
+<h1>Leaflet.MarkerCluster.LayerSupport demo page</h1>
+
+<h2>
+    Compatibility with
+    <a href="https://github.com/dwilhelm89/LeafletSlider" target="_blank">LeafletSlider</a>
+    plugin
+</h2>
+
+<div id="map"></div>
+
+<p>
+    This example is directly adapted from
+    <a href="https://github.com/dwilhelm89/LeafletSlider" target="_blank">LeafletSlider</a>
+    <a href="http://dwilhelm89.github.io/LeafletSlider/" target="_blank">demo page</a>.
+    The only difference is that the Layer Group is first checked into an MCG Layer Support group
+    that is added on map, before the <code>sliderControl</code> is created.
+</p>
+<p>Note: most other Leaflet plugins should also be compatible with MCG Layer Support.</p>
+
+<table class="buttonsTable">
+    <tr>
+        <th>Leaflet</th>
+        <th>Leaflet.markercluster</th>
+        <th>Leaflet.MarkerCluster.LayerSupport</th>
+        <th>LeafletSlider</th>
+    </tr>
+    <tr>
+        <td id="leaflet1"></td>
+        <td id="mcg1"></td>
+        <td id="layersupport1"></td>
+        <td rowspan="2">
+            <div
+                    data-manage-lib="leafletslider"
+                    data-manage-versions="1.0.5, 1.0.4"
+            ></div>
+            <br />
+            <span class="italic">
+                <a href="https://jquery.com/">jQuery</a>&nbsp;1.9.1
+                <br />
+                <a href="https://jqueryui.com/">jQuery UI</a>&nbsp;1.9.2
+                <br />
+                <a href="http://touchpunch.furf.com/">jQuery UI Touch Punch</a>&nbsp;0.2.2
+            </span>
+        </td>
+    </tr>
+    <tr>
+        <td id="leaflet0"></td>
+        <td id="mcg0"></td>
+        <td id="layersupport0"></td>
+        <!-- td "eaten" by above rowspan -->
+    </tr>
+</table>
+
+<div id="reloadButton"></div>
+
+
+<script src="https://unpkg.com/urijs@^1/src/URI.min.js"></script>
+<script src="https://unpkg.com/load-js-css@0.0.2/index.js"></script>
+
+<script src="https://unpkg.com/manage-libs-versions@0.2.1/manage-libs-versions.js"></script>
+<!--script src="manage-libs-versions.js"></script-->
+
+<script src="https://ghybs.github.io/Leaflet.FeatureGroup.SubGroup/leaflet-versions.js"></script>
+<script src="https://ghybs.github.io/Leaflet.FeatureGroup.SubGroup/leaflet.markercluster-versions.js"></script>
+
+<script>
+
+    // Asset(s) for the current demo / debug page.
+    var pageAssets = {
+	    type: 'script',
+	    path: './mcgLayerSupport-leafletslider.js'
+    };
+
+    // Specify the available compatible versions of LeafletSlider plugin.
+    var libLeafletSlider = {
+    	name: 'leafletslider',
+        mandatory: true,
+        versions: [
+	        _makeLibVersionAssets({
+                name: '1.0.5',
+                defaultVersion: true, // Make sure only the most recent version is flagged as default.
+                sriSrcJs: 'sha384-5IfBsOgnREnsHq5tPQFNx2xK/EIJ9e4Ltz079lGfMytGCSrRRxH2JfhZJNUEdRIP'
+            }),
+	        _makeLibVersionAssets({
+		        name: '1.0.4',
+		        sriSrcJs: 'sha384-VnCIJnN9xhnZ+iMePKwqc9zUpvDDX5wGLjRqHXuvhgMxIMGo1sCg2ehhxKxGs1lg'
+	        })
+        ]
+    };
+    var extraLibs = extraLibs || [];
+
+    extraLibs.push(libLeafletSlider);
+
+
+    function _makeLibVersionAssets(options) {
+	    var versionName = options.name;
+
+	    return {
+		    name: versionName,
+		    defaultVersion: options.defaultVersion,
+		    disabled: options.disabled,
+		    assets: [
+			    manageLibsVersions.makeScript('https://cdn.jsdelivr.net/gh/dwilhelm89/LeafletSlider@{{VERSION}}/SliderControl.js', versionName, options.sriSrcJs)
+		    ]
+	    };
+    }
+
+</script>
+
+<script src="libs-setup.js"></script>
+<script src="demo-setup.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+	<meta charset="utf-8" />
+	<title>Leaflet.MarkerCluster.LayerSupport demo page (Layers Control)</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+	<link rel="stylesheet" href="screen.css" />
+	<script src="realworld.388.js"></script>
+
+</head>
+<body>
+
+<h1>Leaflet.MarkerCluster.LayerSupport demo page</h1>
+
+<h2>
+	Compatibility with
+	<a href="http://leafletjs.com/reference-1.1.0.html#control-layers" target="_blank">L.Control.Layers</a>
+</h2>
+
+<div id="map"></div>
+<input id="add" type="button" value="Add AutoMCG to Map" />
+<input id="remove" type="button" value="Remove AutoMCG from Map" />
+<table>
+	<tr>
+		<th>First quarter</th>
+		<td><button data-group="1" data-op="checkIn">checkIn</button></td>
+		<td><button data-group="1" data-op="checkOut">checkOut</button></td>
+		<td><button data-group="1" data-op="addLayer">addLayer</button></td>
+		<td><button data-group="1" data-op="removeLayer">removeLayer</button></td>
+	</tr>
+	<tr>
+		<th>Second quarter</th>
+		<td><button data-group="2" data-op="checkIn">checkIn</button></td>
+		<td><button data-group="2" data-op="checkOut">checkOut</button></td>
+		<td><button data-group="2" data-op="addLayer">addLayer</button></td>
+		<td><button data-group="2" data-op="removeLayer">removeLayer</button></td>
+	</tr>
+	<tr>
+		<th>Third quarter</th>
+		<td><button data-group="3" data-op="checkIn">checkIn</button></td>
+		<td><button data-group="3" data-op="checkOut">checkOut</button></td>
+		<td><button data-group="3" data-op="addLayer">addLayer</button></td>
+		<td><button data-group="3" data-op="removeLayer">removeLayer</button></td>
+	</tr>
+	<tr>
+		<th>Fourth quarter</th>
+		<td><button data-group="4" data-op="checkIn">checkIn</button></td>
+		<td><button data-group="4" data-op="checkOut">checkOut</button></td>
+		<td><button data-group="4" data-op="addLayer">addLayer</button></td>
+		<td><button data-group="4" data-op="removeLayer">removeLayer</button></td>
+	</tr>
+</table>
+<p>
+	Use the above buttons to dynamically checkIn / checkOut / add / remove Layer Groups
+	to/from the <b>MCG Layer Support group</b>. See the effect on the Layers Control.
+</p>
+<p>
+	Use the top right Layers Control to dynamically add / remove Layer Groups from the <b>map</b>.
+	Notice that child markers are actually added to / removed from the Marker Cluster Group!
+</p>
+<p>
+	This is the standard
+	<a href="http://leafletjs.com/reference-1.1.0.html#control-layers" target="_blank">Leaflet Layers Control</a>.
+</p>
+<p>
+	Note: it is normal that the computed clusters depend on the order of insertion.
+	This is a result of Leaflet.markercluster algorithm.
+</p>
+<p>
+	<b>Note:</b> if your usage requires only compatibility of MCG with
+	<a href="http://leafletjs.com/reference-1.1.0.html#control-layers" target="_blank">L.Control.Layers</a>,
+	you might be interested in this more simple plugin:
+	<a href="https://github.com/ghybs/Leaflet.FeatureGroup.SubGroup" target="_blank">Leaflet.FeatureGroup.SubGroup</a>.
+</p>
+<p>
+	This example is directly adapted from
+	<a href="https://github.com/Leaflet/Leaflet.markercluster" target="_blank">Leaflet.markercluster</a>
+	<a href="http://leaflet.github.io/Leaflet.markercluster/example/marker-clustering-realworld.388.html" target="_blank">demo page</a>.
+	The only difference is that markers are added to 4 different Layer Groups which are checked
+	into the MCG Layer Support group, instead of markers being directly added to the MCG.
+</p>
+
+
+<div id="versionsSelectionTable"></div>
+<div id="reloadButton"></div>
+
+
+<script src="https://unpkg.com/urijs@^1/src/URI.min.js"></script>
+<script src="https://unpkg.com/load-js-css@0.0.2/index.js"></script>
+
+<script src="https://unpkg.com/manage-libs-versions@0.2.1/manage-libs-versions.js"></script>
+<!--script src="manage-libs-versions.js"></script-->
+
+<script src="https://ghybs.github.io/Leaflet.FeatureGroup.SubGroup/leaflet-versions.js"></script>
+<script src="https://ghybs.github.io/Leaflet.FeatureGroup.SubGroup/leaflet.markercluster-versions.js"></script>
+<script src="libs-setup.js"></script>
+
+<script>
+
+	pageAssets = {
+		type: 'script',
+		path: './mcgLayerSupport-controlLayers-realworld.388.js'
+	};
+
+</script>
+
+<script src="demo-setup.js"></script>
+
+</body>
+</html>

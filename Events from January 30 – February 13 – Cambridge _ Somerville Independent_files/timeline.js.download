@@ -1,0 +1,28 @@
+/**
+ * Timeline Toggle Functionality
+ * Shows/hides related posts timeline when Timeline button is clicked
+ */
+(function() {
+    'use strict';
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const timelineButton = document.getElementById('timeline-toggle');
+        const timelineContainer = document.getElementById('timeline-container');
+
+        if (timelineButton && timelineContainer) {
+            timelineButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Toggle timeline visibility
+                if (timelineContainer.style.display === 'none') {
+                    timelineContainer.style.display = 'block';
+                    timelineButton.setAttribute('aria-expanded', 'true');
+                } else {
+                    timelineContainer.style.display = 'none';
+                    timelineButton.setAttribute('aria-expanded', 'false');
+                }
+            });
+        }
+    });
+})();
+

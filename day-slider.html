@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day Slider</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto Serif', serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .day-slider-container {
+            width: 100%;
+            max-width: 1200px;
+            height: 422px;
+            position: relative;
+            background: white;
+            border-top: 3px solid black;
+            border-bottom: 3px solid black;
+            padding: 40px 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .day-slider-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+            gap: 30px;
+            position: relative;
+        }
+
+        .day-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            position: relative;
+            min-width: 80px;
+        }
+
+        .day-arc {
+            width: 100%;
+            height: 60px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .day-arc svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .day-number {
+            font-size: 72px;
+            font-weight: 400;
+            line-height: 1;
+            color: black;
+            text-align: center;
+            font-feature-settings: "GRAD" 0, "wdth" 100;
+            letter-spacing: -2px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .day-slider-container {
+                height: auto;
+                padding: 30px 15px;
+            }
+
+            .day-slider-wrapper {
+                gap: 15px;
+                flex-wrap: wrap;
+            }
+
+            .day-item {
+                min-width: 60px;
+            }
+
+            .day-number {
+                font-size: 48px;
+            }
+
+            .day-arc {
+                height: 40px;
+                margin-bottom: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .day-slider-container {
+                padding: 20px 10px;
+            }
+
+            .day-number {
+                font-size: 36px;
+            }
+
+            .day-item {
+                min-width: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="day-slider-container" data-name="Day Slider">
+        <div class="day-slider-wrapper">
+            <div class="day-item">
+                <div class="day-arc">
+                    <svg viewBox="0 0 100 60" preserveAspectRatio="none">
+                        <path d="M 10 50 Q 50 10 90 50" stroke="black" stroke-width="3" fill="none"/>
+                    </svg>
+                </div>
+                <div class="day-number">23</div>
+            </div>
+
+            <div class="day-item">
+                <div class="day-arc">
+                    <svg viewBox="0 0 100 60" preserveAspectRatio="none">
+                        <path d="M 10 50 Q 50 10 90 50" stroke="black" stroke-width="3" fill="none"/>
+                    </svg>
+                </div>
+                <div class="day-number">24</div>
+            </div>
+
+            <div class="day-item">
+                <div class="day-arc">
+                    <svg viewBox="0 0 100 60" preserveAspectRatio="none">
+                        <path d="M 10 50 Q 50 10 90 50" stroke="black" stroke-width="3" fill="none"/>
+                    </svg>
+                </div>
+                <div class="day-number">2</div>
+            </div>
+
+            <div class="day-item">
+                <div class="day-arc">
+                    <svg viewBox="0 0 100 60" preserveAspectRatio="none">
+                        <path d="M 10 50 Q 50 10 90 50" stroke="black" stroke-width="3" fill="none"/>
+                    </svg>
+                </div>
+                <div class="day-number">26</div>
+            </div>
+
+            <div class="day-item">
+                <div class="day-arc">
+                    <svg viewBox="0 0 100 60" preserveAspectRatio="none">
+                        <path d="M 10 50 Q 50 10 90 50" stroke="black" stroke-width="3" fill="none"/>
+                    </svg>
+                </div>
+                <div class="day-number">27</div>
+            </div>
+
+            <div class="day-item">
+                <div class="day-arc">
+                    <svg viewBox="0 0 100 60" preserveAspectRatio="none">
+                        <path d="M 10 50 Q 50 10 90 50" stroke="black" stroke-width="3" fill="none"/>
+                    </svg>
+                </div>
+                <div class="day-number">28</div>
+            </div>
+
+            <div class="day-item">
+                <div class="day-arc">
+                    <svg viewBox="0 0 100 60" preserveAspectRatio="none">
+                        <path d="M 10 50 Q 50 10 90 50" stroke="black" stroke-width="3" fill="none"/>
+                    </svg>
+                </div>
+                <div class="day-number">29</div>
+            </div>
+
+            <div class="day-item">
+                <div class="day-arc">
+                    <svg viewBox="0 0 100 60" preserveAspectRatio="none">
+                        <path d="M 10 50 Q 50 10 90 50" stroke="black" stroke-width="3" fill="none"/>
+                    </svg>
+                </div>
+                <div class="day-number">30</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!-- Code from d3-graph-gallery.com -->
+<!DOCTYPE html>
+<meta charset="utf-8">
+<head>
+<!-- Load d3.js and the geo projection plugin -->
+<script src="https://d3js.org/d3.v4.js"></script>
+<script src="https://d3js.org/d3-geo-projection.v2.min.js"></script>
+<script src="https://cdn.jsdelivr.net"></script>
+<!-- Load Leaflet -->
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>       
+    <!-- <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script> -->
+    <link rel="stylesheet" href="./leaflet-mapwithlabels.css" />
+    <script src="./leaflet-mapwithlabels.js"></script>
+    <link rel="stylesheet" href="./leaflet.awesome-markers.css">
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.css" rel="stylesheet">
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet-geosearch@3.0.0/dist/geosearch.css"
+/>
+<script src="https://unpkg.com/leaflet-geosearch@latest/dist/bundle.min.js"></script>
+    <style>
+        
+        body { margin: 0; padding: 0; }
+        #map_div { height: 600px; width: 100%; }
+        .info { padding: 6px 8px; font: 14px/16px Arial; background: white; border-radius: 5px; box-shadow: 0 0 15px rgba(0,0,0,0.2); }
+        .legend i { width: 18px; height: 18px; float: left; margin-right: 8px; opacity: 0.7; }
+    html { height: 100% }
+        body { height: 100%; margin: 0; padding: 0 }
+        #map-canvas { height: 100% }
+               html, body, #map-canvas { height: 100%; margin: 0; padding: 0; background: #f0f0f0; }
+        
+        path.neighborhood { 
+            cursor: pointer; 
+            transition: fill-opacity 0.3s ease; 
+        }
+.leaflet-marker-icon, .leaflet-marker-shadow, .leaflet-image-layer, .leaflet-pane > svg path, .leaflet-tile-container {
+				pointer-events: visible;
+			}
+
+        /* High-visibility label styling - EXTRA BOLD */
+        .d3-label {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-weight: 900;
+            fill: #111;
+            text-anchor: middle;
+            pointer-events: none;       
+            text-shadow: 2px 2px 0px #fff, -2px -2px 0px #fff, 2px -2px 0px #fff, -2px 2px 0px #fff;
+        }
+          html, body, #map_div {
+    height: 100% !important;
+    width: 100% !important;
+    margin: 0;
+    padding: 0;
+    -webkit-backface-visibility: hidden; /* Fixes "shimmer" on some browsers */
+}   
+
+/* Add this to your map page styles */
+.leaflet-zoom-animated {
+    display: block !important; /* Forces the SVG layer to stay rendered */
+}
+
+
+.leaflet-tile-container {
+    transition: opacity 0.2s linear; /* Makes tile loading less jarring */
+}
+
+
+/* Ensure the labels and polygons stay on the same rendering plane */
+.leaflet-pane {
+    z-index: 400;
+}
+
+/* Prevents the SVG renderer from clipping polygons during a resize */
+/* Force the SVG container to always fill the available space */
+/* Force the SVG container to fill the 100% space of the expanded iframe */
+.s{
+    width: 100% !important;
+    height: 100% !important;
+    transform-origin: 0 0 !important;
+    overflow: visible !important;
+}
+
+/* Ensure labels don't "stutter" during the move */
+.leaflet-label {
+    will-change: transform, top, left;
+    transition: none !important;
+}
+/* Ensure the path (polygon) doesn't disappear or flicker */
+/* Keep the polygon fill stable */
+path.leaflet-interactive {
+    /* Prevents borders from getting thick and overlapping during zoom */
+    vector-effect: non-scaling-stroke !important;
+    stroke-width: 1px !important; 
+}
+   </style>
+        <link rel="stylesheet" href="./MarkerCluster.css" />
+        <link rel="stylesheet" href="./MarkerCluster.Default.css" />
+        <script src="./leaflet.markercluster-src.js"></script>
+        <!-- #SILAS <script src="./leaflet.markercluster.freezable.js"></script> -->
+        <!-- After Leaflet script -->
+        <script src="https://unpkg.com/leaflet.markercluster.freezable@1.0.0/dist/leaflet.markercluster.freezable.js"></script>
+
+        <!-- #SILAS This looks like the wrong file name to me -->
+        <!-- <script src="./LDeflate (1).js"></script> -->
+        <!-- #SILAS use the online version -- this is from the github site -->
+        <script src="https://unpkg.com/Leaflet.Deflate/dist/L.Deflate.js"></script>
+        <script src="./leaflet.awesome-markers.js"></script>
+        <!-- #SILAS I couldn't find the local version so I'm using the online version below -->
+        <!-- <script src="./leaflet.markercluster.layersupport.js"></script> -->
+        <!-- After Leaflet and Leaflet.markercluster scripts -->
+        <script src="https://unpkg.com/leaflet.markercluster.layersupport@2.0.1/dist/leaflet.markercluster.layersupport.js"></script>
+
+</head>
+<body>
+
+<!-- Create an element where the map will take place -->
+<div id="mapid"></div>
+   
+
+<style>
+#mapid { height: 400px; }
+</style>
+
+<script>
+    var map;
+    try {
+        // center on Somerville/Cambridge area to see neighborhood data
+        map = L.mapWithLabels('mapid', { 
+            center: [42.3840352, -71.1134377], 
+            zoom: 13,
+            zoomSnap: 0,
+            zoomDelta: 0.1,
+            wheelPxPerZoomLevel: 120
+        });
+    } catch (e) {
+        console.warn("mapWithLabels plugin not found, using standard Leaflet map.");
+        // FIXED: Changed 'map-canvas' to 'mapid' to match your HTML div
+        map = L.map('mapid').setView([42.3840352, -71.1134377], 13);
+    }
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // --- PART 1: SVG CIRCLES (Global View) ---
+    L.svg().addTo(map);
+
+    var markers = [
+        {long: 9.083, lat: 42.149}, {long: 7.26, lat: 43.71},
+        {long: 2.349, lat: 48.864}, {long: -1.397, lat: 43.664},
+        {long: 3.075, lat: 50.640}, {long: -3.83, lat: 48}
+    ];
+
+    // Select the Leaflet-generated SVG
+    var svg = d3.select("#mapid").select("svg");
+    
+    var circles = svg.selectAll("circle")
+        .data(markers)
+        .enter()
+        .append("circle")
+        .attr("r", 14)
+        .style("fill", "red")
+        .attr("stroke", "red")
+        .attr("stroke-width", 3)
+        .attr("fill-opacity", .4);
+
+    function updateCircles() {
+        circles
+            .attr("cx", function(d){ return map.latLngToLayerPoint([d.lat, d.long]).x })
+            .attr("cy", function(d){ return map.latLngToLayerPoint([d.lat, d.long]).y });
+    }
+
+    // Sync circles on map movement
+    map.on("move viewreset", updateCircles);
+    updateCircles();
+
+    // --- PART 2: NEIGHBORHOOD OVERLAY (GeoJSON) ---
+    var neighborhoodData = [];
+
+    var d3Overlay = L.d3SvgOverlay(function (sel, proj) {
+        var paths = sel.selectAll('path').data(neighborhoodData);
+        
+        paths.enter()
+            .append('path')
+            .attr('class', 'neighborhood')
+            .attr('stroke', 'black')
+            .attr('fill', function() { return d3.hsl(Math.random() * 360, 0.7, 0.5); })
+            .attr('fill-opacity', '0.5')
+            .on('mouseover', function() {
+                d3.select(this).transition().duration(150).attr('fill-opacity', '0.8');
+            })
+            .on('mouseout', function() {
+                d3.select(this).transition().duration(150).attr('fill-opacity', '0.5');
+            })
+            .on('click', function(d) {
+                map.fitBounds(L.geoJson(d).getBounds());
+            });
+
+        paths.attr('d', proj.pathFromGeojson)
+             .attr('stroke-width', 1 / proj.scale);
+    });
+
+    // Load GeoJSON and activate overlay
+    d3.json("./somervilleNeighborhoods (2).geo.json", function(error, data) {
+        if (error) {
+            console.error("GeoJSON Error:", error);
+            return;
+        }
+        neighborhoodData = data.features;
+        d3Overlay.addTo(map);
+    });
+</script>
+</body>
+</ht

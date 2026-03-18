@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+    <head>
+        <title>LEAFLET MAP WITH LABELS - Map class supporting labels for Leaflet</title>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>        <style>
+        	html, body {
+			height: 100%;
+			margin: 0;
+		}
+		.leaflet-container {
+			height: 400px;
+			width: 600px;
+			max-width: 100%;
+			max-height: 100%;
+		}
+        </style>
+        	<link rel="stylesheet" href="./MarkerCluster.css" />
+	<link rel="stylesheet" href="./MarkerCluster.Default.css" />
+	<script src="./leaflet.markercluster-src.js"></script>
+   <script src="./leaflet.markercluster.layersupport.js"></script>
+    </head>
+    <body>
+		<div id="map"></div>
+		      <script src="./BOUNDARY_CDDNeighborhoods_geojson.js"></script>
+        <script src="./somervilleNeighborhoods-geojson.js"></script>
+		<script>
+            const map = L.map('map').fitBounds([[42.353813, -71.102608], [42.419111, -71.121319
+
+]]);
+const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		maxZoom: 19,
+		attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+	}).addTo(map);
+
+
+// Create a MarkerClusterGroup with Layer Support enabled
+var mcgLayerSupportGroup = L.markerClusterGroup.layerSupport();
+
+// Create separate layer groups for different types of markers
+var stores = L.layerGroup();
+var homes = L.layerGroup();
+
+// Check these layer groups into the MCG Layer Support
+
+mcgLayerSupportGroup.checkIn([stores, homes]);
+
+// Add markers to their respective layer groups
+L.marker([42.39392, -71.125408]).bindPopup('StarMarket').addTo(stores);
+L.marker([42.367843, -71.099929]).bindPopup('229 Harvard').addTo(homes);
+L.marker([42.401424, -71.13354]).bindPopup('26 Murray Hill Road').addTo(homes);
+
+mcgLayerSupportGroup.addTo(map);
+
+// Add the layer groups to the map to display them (they will be clustered automatically)
+stores.addTo(map);
+homes.addTo(map);
+
+// Add the standard Leaflet layers control
+var overlays = {
+    "Star Market": stores,
+    "Homes": homes
+};
+L.control.layers(null, overlays).addTo(map);
+
+ </script>
+ 
+
+    </body>
+</html>     
+

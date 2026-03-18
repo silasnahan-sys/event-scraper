@@ -1,0 +1,21 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "jsx": "react",
+    "allowJs": true,
+    "pretty": true,
+    "strict": true,
+    "rootDirs": ["src", "docs"],
+    "sourceMap": true,
+    "removeComments": false,
+    "noEmitHelpers": false,
+    "outDir": "lib",
+    "declaration": true
+  },
+  "include": ["src", "typings"],
+  "exclude": ["node_modules", "**/*.spec.ts", "**/*.spec.js"]
+}

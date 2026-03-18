@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html >
+<head>
+
+	<link rel="stylesheet" href="../_static/js/dojo/../dijit/themes/claro/claro.css">
+	<style type="text/css">
+.undefined table.dijitCalendarContainer {
+  margin: 25px auto;
+  width: 200px;
+}
+	</style>
+	<script>dojoConfig = {parseOnLoad: true}</script>
+	<script src='dojo/dojo.js'></script>
+	
+	<script>
+require([
+    "dojo/ready",
+    "dijit/dijit", // loads the optimized dijit layer
+    "dijit/Calendar",
+    "dojo/date"
+], function(ready, dijit, Calendar, date){
+    ready(function(){
+        new Calendar({
+        value: new Date(),
+        isDisabledDate: function(d){
+            var d = new Date(d); d.setHours(0, 0, 0, 0);
+            var today = new Date(); today.setHours(0, 0, 0, 0);
+            return Math.abs(date.difference(d, today, "week")) > 0;
+        }
+        }, "mycal");
+    });
+});
+	</script>
+</head>
+<body class="claro">
+    <div id="mycal"></div>
+</body>
+</html>

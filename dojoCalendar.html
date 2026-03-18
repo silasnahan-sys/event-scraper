@@ -1,0 +1,372 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calendar Events</title>
+
+  <link rel="stylesheet" href="./dijit/themes/claro/claro.css" />
+  <link rel="stylesheet" href="Calendar.css" />
+
+  <style>
+    :root {
+      --bg: #0c0f26;
+      --panel: rgba(255, 255, 255, 0.95);
+      --panel-2: rgba(255, 255, 255, 0.85);
+      --text: #1b1b1f;
+      --muted: #4f4f59;
+      --accent: #ff6600;
+      --accent-muted: rgba(255, 102, 0, 0.15);
+      --radius: 16px;
+      --shadow: 0 18px 30px rgba(0, 0, 0, 0.25);
+      --shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.15);
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+        Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background: linear-gradient(160deg, #0a0d1d 0%, #11254d 40%, #0c0f26 100%);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .calendar-app {
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 2.5rem 1.25rem;
+      gap: 1.75rem;
+    }
+
+    .calendar-app__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 1rem;
+      max-width: 1150px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .calendar-app__title {
+      font-size: clamp(1.8rem, 2.5vw, 2.6rem);
+      margin: 0;
+      color: #fff;
+      letter-spacing: -0.01em;
+    }
+
+    .calendar-app__subtitle {
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.75);
+      margin: 0;
+      max-width: 40rem;
+    }
+
+    .calendar-app__content {
+      display: grid;
+      grid-template-columns: minmax(270px, 380px) minmax(320px, 1fr);
+      column-gap: 1.5rem;
+      row-gap: 1.5rem;
+      max-width: 1150px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .calendar-panel,
+    .events-panel {
+      background: var(--panel);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.25rem;
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      overflow: hidden;
+    }
+
+    .events-panel {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .events-panel header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.85rem;
+      flex-wrap: wrap;
+    }
+
+    .events-panel h2 {
+      font-size: 1.35rem;
+      margin: 0;
+    }
+
+    .events-panel .event-count {
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .events-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      overflow: auto;
+      padding-right: 0.25rem;
+    }
+
+    .events-list::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    .events-list::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 999px;
+    }
+
+    .event-card {
+      border-radius: 18px;
+      background: var(--panel-2);
+      box-shadow: var(--shadow-sm);
+      padding: 1.1rem 1.1rem 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      display: grid;
+      gap: 0.45rem;
+    }
+
+    .event-card__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .event-card__title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    .event-card__title a {
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .event-card__title a:hover {
+      text-decoration: underline;
+    }
+
+    .event-card__meta {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.3;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .event-tag {
+      padding: 0.25rem 0.55rem;
+      border-radius: 999px;
+      background: var(--accent-muted);
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .calendar-fallback {
+      margin-top: 1rem;
+      background: rgba(0, 0, 0, 0.15);
+      border-radius: 12px;
+      padding: 0.95rem 1rem;
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    @media (max-width: 900px) {
+      .calendar-app__content {
+        grid-template-columns: 1fr;
+      }
+
+      .calendar-panel {
+        max-width: 720px;
+        margin: 0 auto;
+      }
+
+      .events-panel {
+        margin: 0 auto;
+        max-width: 720px;
+      }
+    }
+  </style>
+
+  <script>
+    dojoConfig = { parseOnLoad: true };
+  </script>
+  <script src="./dojo/dojo.js"></script>
+  <script>
+    const formatDate = (date) => {
+      return date.toLocaleDateString(undefined, {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+    };
+
+    const formatTime = (iso) => {
+      const d = new Date(iso);
+      return d.toLocaleTimeString(undefined, {
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    };
+
+    const toKey = (date) => {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    };
+
+    const createEventCard = (event) => {
+      const card = document.createElement('article');
+      card.className = 'event-card';
+
+      const header = document.createElement('div');
+      header.className = 'event-card__header';
+
+      const title = document.createElement('h3');
+      title.className = 'event-card__title';
+      const link = document.createElement('a');
+      link.href = event.link || '#';
+      link.textContent = event.title || 'Untitled event';
+      link.target = '_blank';
+      link.rel = 'noreferrer noopener';
+      title.appendChild(link);
+
+      const label = document.createElement('span');
+      label.className = 'event-tag';
+      label.textContent = formatTime(event.start);
+
+      header.append(title, label);
+
+      const meta = document.createElement('div');
+      meta.className = 'event-card__meta';
+      meta.innerHTML = `
+        <span>${event.venue || 'Unknown venue'}</span>
+        <span>${event.city || ''}</span>
+        <span>${event.price ? `${event.price}` : ''}</span>
+      `;
+
+      card.append(header, meta);
+      return card;
+    };
+
+    let eventsByDate = {};
+
+    const renderEvents = (date) => {
+      const dateKey = toKey(date);
+      const selectedLabel = document.getElementById('selectedDateLabel');
+      const countLabel = document.getElementById('eventsCount');
+      const list = document.getElementById('eventsList');
+
+      selectedLabel.textContent = formatDate(date);
+      const events = eventsByDate[dateKey] || [];
+      countLabel.textContent = `${events.length} event${events.length === 1 ? '' : 's'}`;
+
+      list.innerHTML = '';
+      if (!events.length) {
+        const empty = document.createElement('div');
+        empty.className = 'calendar-fallback';
+        empty.textContent = 'No events found for this date. Try selecting another day or browse the month.';
+        list.appendChild(empty);
+        return;
+      }
+
+      events.forEach((event) => {
+        list.appendChild(createEventCard(event));
+      });
+    };
+
+    const loadEvents = async () => {
+      try {
+        const response = await fetch('bostonevents.json');
+        if (!response.ok) {
+          throw new Error(`Fetch error: ${response.status}`);
+        }
+        const json = await response.json();
+        const items = Array.isArray(json) ? json : json.events || [];
+
+        eventsByDate = items.reduce((acc, ev) => {
+          const dt = new Date(ev.start);
+          if (isNaN(dt)) return acc;
+          const key = toKey(dt);
+          acc[key] = acc[key] || [];
+          acc[key].push(ev);
+          return acc;
+        }, {});
+
+        renderEvents(new Date());
+      } catch (err) {
+        console.error('Failed to load event data:', err);
+        const list = document.getElementById('eventsList');
+        const error = document.createElement('div');
+        error.className = 'calendar-fallback';
+        error.textContent = 'Unable to load events. Make sure bostonevents.json is available.';
+        list.innerHTML = '';
+        list.appendChild(error);
+      }
+    };
+
+    require(['dojo/parser', 'dijit/dijit', 'dijit/Calendar', 'dojo/dom'], (parser, dijit, Calendar, dom) => {
+      const calendarWidget = new Calendar({
+        value: new Date(),
+        onChange(value) {
+          renderEvents(value);
+        },
+      });
+
+      const calendarPlace = dom.byId('calendarContainer');
+      calendarWidget.placeAt(calendarPlace);
+
+      loadEvents();
+    });
+  </script>
+</head>
+
+<body class="claro">
+  <div class="calendar-app">
+    <header class="calendar-app__header">
+      <div>
+        <h1 class="calendar-app__title">Events Calendar</h1>
+        <p class="calendar-app__subtitle">Pick a date and see what’s happening around Cambridge + Somerville.</p>
+      </div>
+    </header>
+
+    <main class="calendar-app__content">
+      <section class="calendar-panel" aria-label="Calendar">
+        <div id="calendarContainer"></div>
+      </section>
+
+      <section class="events-panel" aria-label="Events">
+        <header>
+          <h2 id="selectedDateLabel">Loading…</h2>
+          <div class="event-count" id="eventsCount">...</div>
+        </header>
+        <div id="eventsList" class="events-list"></div>
+      </section>
+    </main>
+  </div>
+</body>
+
+</html>

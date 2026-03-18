@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+     <title>D3 + Labels + Cluster LayerSupport</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+    <!--
+      #SILAS you are loading leaflet twice below - REMOVE 1
+    -->
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>       
+    <!-- <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script> -->
+    <link rel="stylesheet" href="./leaflet-mapwithlabels.css" />
+    <script src="./leaflet-mapwithlabels.js"></script>
+    <link rel="stylesheet" href="./leaflet.awesome-markers.css">
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.css" rel="stylesheet">
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet-geosearch@3.0.0/dist/geosearch.css"
+/>
+<script src="https://unpkg.com/leaflet-geosearch@latest/dist/bundle.min.js"></script>
+    <style>
+        
+        body { margin: 0; padding: 0; }
+        #map_div { height: 600px; width: 100%; }
+        .info { padding: 6px 8px; font: 14px/16px Arial; background: white; border-radius: 5px; box-shadow: 0 0 15px rgba(0,0,0,0.2); }
+        .legend i { width: 18px; height: 18px; float: left; margin-right: 8px; opacity: 0.7; }
+    html { height: 100% }
+        body { height: 100%; margin: 0; padding: 0 }
+        #map-canvas { height: 100% }
+               html, body, #map-canvas { height: 100%; margin: 0; padding: 0; background: #f0f0f0; }
+        
+        path.neighborhood { 
+            cursor: pointer; 
+            transition: fill-opacity 0.3s ease; 
+        }
+.leaflet-marker-icon, .leaflet-marker-shadow, .leaflet-image-layer, .leaflet-pane > svg path, .leaflet-tile-container {
+				pointer-events: visible;
+			}
+
+        /* High-visibility label styling - EXTRA BOLD */
+        .d3-label {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-weight: 900;
+            fill: #111;
+            text-anchor: middle;
+            pointer-events: none; 
+            text-shadow: 2px 2px 0px #fff, -2px -2px 0px #fff, 2px -2px 0px #fff, -2px 2px 0px #fff;
+        }
+          html, body, #map_div {
+    height: 100% !important;
+    width: 100% !important;
+    margin: 0;
+    padding: 0;
+    -webkit-backface-visibility: hidden; /* Fixes "shimmer" on some browsers */
+}   
+
+/* Add this to your map page styles */
+.leaflet-zoom-animated {
+    display: block !important; /* Forces the SVG layer to stay rendered */
+}
+
+
+.leaflet-tile-container {
+    transition: opacity 0.2s linear; /* Makes tile loading less jarring */
+}
+
+
+/* Ensure the labels and polygons stay on the same rendering plane */
+.leaflet-pane {
+    z-index: 400;
+}
+
+/* Prevents the SVG renderer from clipping polygons during a resize */
+/* Force the SVG container to always fill the available space */
+/* Force the SVG container to fill the 100% space of the expanded iframe */
+.s{
+    width: 100% !important;
+    height: 100% !important;
+    transform-origin: 0 0 !important;
+    overflow: visible !important;
+}
+
+/* Ensure labels don't "stutter" during the move */
+.leaflet-label {
+    will-change: transform, top, left;
+    transition: none !important;
+}
+/* Ensure the path (polygon) doesn't disappear or flicker */
+/* Keep the polygon fill stable */
+path.leaflet-interactive {
+    /* Prevents borders from getting thick and overlapping during zoom */
+    vector-effect: non-scaling-stroke !important;
+    stroke-width: 1px !important; 
+}
+   </style>
+        <link rel="stylesheet" href="./MarkerCluster.css" />
+        <link rel="stylesheet" href="./MarkerCluster.Default.css" />
+        <script src="./leaflet.markercluster-src.js"></script>
+        <!-- #SILAS <script src="./leaflet.markercluster.freezable.js"></script> -->
+        <!-- After Leaflet script -->
+        <script src="https://unpkg.com/leaflet.markercluster.freezable@1.0.0/dist/leaflet.markercluster.freezable.js"></script>
+
+        <!-- #SILAS This looks like the wrong file name to me -->
+        <!-- <script src="./LDeflate (1).js"></script> -->
+        <!-- #SILAS use the online version -- this is from the github site -->
+        <script src="https://unpkg.com/Leaflet.Deflate/dist/L.Deflate.js"></script>
+        <script src="./leaflet.awesome-markers.js"></script>
+        <!-- #SILAS I couldn't find the local version so I'm using the online version below -->
+        <!-- <script src="./leaflet.markercluster.layersupport.js"></script> -->
+        <!-- After Leaflet and Leaflet.markercluster scripts -->
+        <script src="https://unpkg.com/leaflet.markercluster.layersupport@2.0.1/dist/leaflet.markercluster.layersupport.js"></script>
+
+</head>
+<body>
+    <!--
+    #SILAS:
+    -- you have two divs with id map_canvas -- REMOVE ONE OF THEM
+    -- you are adding the ./leaflet.markercluster-src.js THREE times -- REMOVE THE SECOND AND THIRD TIMES
+    
+    -->
+    <div id="map-canvas"></div>
+    <!-- #SILAS this next line is not a script it is just a web site -->
+    <!-- <script src="https://d3js.org"></script> -->
+
+    <!-- <script src="./leaflet.markercluster-src.js"></script> -->
+    <script src="L.D3SvgOverlay.min.js"></script>
+    <!-- #SILAS - you're already loading this with a different name leaflet-mapwithlabels.js (there's a HYPHEN instead of a period)-->
+    <!-- <script src="./leaflet.mapwithlabels.js"></script> -->
+    <!-- div id="map-canvas"></div -->
+
+    <!-- #SILAS you already load leaflet.js in the head - REMOVE THIS NEXT ONE -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.9/d3.min.js"></script>
+
+
+
+    <!-- <script src="./leaflet.markercluster-src.js"></script> -->
+    <!-- Second: The LayerSupport sub-plugin (depends on the one above) -->
+
+    <!-- Third: D3 Overlay -->
+    <script src="L.D3SvgOverlay.min.js"></script>
+    <!-- Fourth: Your local Label plugin (Fix path if needed) -->
+
+    <!-- #SILAS - you are loading this above already -- REMOVE THIS ONE-->
+    <!-- <script src="./leaflet.mapwithlabels.js"></script> -->
+
+    <!-- #SILAS - import the cambridgeSomervilleNeighborhoods with a var so you can use this with the marker cluster-->
+    <!-- this stores the cambridgeSomervilleNeighborhoods to a var named "cambridgeSomervilleNeighborhoods"-->
+    <script src="./cambridgeSomervilleNeighborhoods.geojson.js"></script>    
+
+<script>
+    // #SILAS -- adding the polycolor function here. This creates the random colors that are given to each neighborhood
+    // -- if you search polycolor in this html, you'll see where this function is called
+    function polyColor(f) {
+            let p = f.properties.Nepesseg;
+            let r = Math.random() * 150 + 100;
+            let g = Math.random() * 150 + 100;
+            let b = Math.random() * 150 + 100;
+            return { fillColor: `rgb(${r},${g},${b})`, fillOpacity: .7, color: 'black', opacity: 1, weight: 1 };
+    }
+
+
+    // 1. Initialize Map
+    var map;
+    try {
+        map = L.mapWithLabels('map-canvas', { 
+            center: [42.3840352, -71.1134377], 
+            zoom: 13 
+        });
+    } catch (e) {
+        console.warn("mapWithLabels plugin not found, using standard Leaflet map.");
+        map = L.map('map-canvas').setView([42.3840352, -71.1134377], 13);
+    }
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    
+    var neighborhoodData = [];
+
+    // 2. Define the D3 Overlay (Shapes + Labels + Interactions)
+    var d3Overlay = L.d3SvgOverlay(function (sel, proj) {
+        
+        // --- DRAW NEIGHBORHOOD SHAPES ---
+        var paths = sel.selectAll('path').data(neighborhoodData);
+        
+        paths.enter()
+            .append('path')
+            .attr('class', 'neighborhood')
+            .attr('stroke', 'black')
+            .attr('fill', function() { return d3.hsl(Math.random() * 360, 0.7, 0.5); })
+            .attr('fill-opacity', '0.5')
+            // HOVER EFFECTS
+            .on('mouseover', function(d) {
+                d3.select(this)
+                    .transition().duration(150)
+                    .attr('fill-opacity', '0.8')
+                    .attr('stroke-width', 3 / proj.scale);
+            })
+            .on('mouseout', function(d) {
+                d3.select(this)
+                    .transition().duration(150)
+                    .attr('fill-opacity', '0.5')
+                    .attr('stroke-width', 1 / proj.scale);
+            })
+            // CLICK TO ZOOM
+            .on('click', function(d) {
+                map.fitBounds(L.geoJson(d).getBounds());
+            });
+
+        // Sync path projection to map zoom/pan
+        paths.attr('d', proj.pathFromGeojson)
+             .attr('stroke-width', 1 / proj.scale);
+
+        // --- DRAW LABELS ---
+        var labels = sel.selectAll('text').data(neighborhoodData);
+        
+ 
+        labels.each(function(d) {
+            // Find center of each polygon for label placement
+            var center = L.geoJson(d).getBounds().getCenter();
+            var point = proj.latLngToLayerPoint(center);
+            d3.select(this)
+                .attr('x', point.x)
+                .attr('y', point.y)
+                .style('font-size', (14 / proj.scale) + 'px');
+        });
+    });
+
+    // 3. LOAD DATA AND ACTIVATE
+    // IMPORTANT: Ensure this filename matches your .geojson file exactly!
+    d3.json("./somervilleNeighborhoods (2).geo.json", function(error, data) {
+        if (error) {
+            console.error("GeoJSON failed to load. Check file path or use a local server.", error);
+            return;
+        }
+        
+        neighborhoodData = data.features;
+        
+        // Add the D3 layer to the map now that we have data
+        d3Overlay.addTo(map);
+        
+        console.log("Map initialized with", neighborhoodData.length, "neighborhoods.");
+
+
+    });
+
+
+
+var mcgLayerSupportGroup = L.markerClusterGroup.layerSupport();
+
+// Create separate layer groups for different types of markers
+var stores = L.layerGroup();
+var homes = L.layerGroup();
+var bookstores = L.layerGroup();
+var WestCambridge = L.layerGroup();
+
+// Check these layer groups into the MCG Layer Support
+
+mcgLayerSupportGroup.checkIn([stores, homes, bookstores, WestCambridge]);
+
+// Add markers to their respective layer groups
+L.marker([42.38985, -71.1185]).bindPopup('StarMarket').addTo(stores);
+L.marker([42.39392, -71.125408]).bindPopup('Pemberton').addTo(stores);
+L.marker([42.367843, -71.099929]).bindPopup('229 Harvard').addTo(homes);
+L.marker([42.401424, -71.13354]).bindPopup('26 Murray Hill Road').addTo(homes);
+L.marker([42.3817724,-71.0872455]).bindPopup('All She Wrote Books').addTo(bookstores);
+L.marker([42.3812783,-71.1008173]).bindPopup('Side Quest Books & Games').addTo(bookstores);
+L.marker([42.372541, -71.116363]).bindPopup('Harvard Book Store').addTo(bookstores);
+L.marker([42.3873306,-71.1214895]).bindPopup('Porter Square Books').addTo(bookstores);
+L.marker([42.3812973,-73.5779292]).bindPopup('Bryn Mawr Bookstore').addTo(bookstores);
+L.marker([42.3738631,-71.1242451]).bindPopup('Lovestruck Books').addTo(WestCambridge);
+
+mcgLayerSupportGroup.addTo(map);
+
+// Add the layer groups to the map to display them (they will be clustered automatically)
+stores.addTo(map);
+homes.addTo(map);
+WestCambridge.addTo(map);
+bookstores.addTo(map);
+
+// Add the standard Leaflet layers control
+var overlays = {
+    "Grocery Stores": stores,
+    "Homes": homes,
+    "Bookstores": bookstores,
+    "West Cambridge": WestCambridge
+};
+L.control.layers(null, overlays).addTo(map);
+
+var markers = L.markerClusterGroup({spiderfyOnMaxZoom: false, showCoverageOnHover: false, zoomToBoundsOnClick: false});
+markers.on('clusterclick', function (a) {
+	a.layer.zoomToBounds({padding: [60, 60]});
+});
+
+
+
+// Store the layer so we can find Davis Square later
+// #SILAS - CHANGE THIS TO the cambridgeSomervilleNeighborhoods
+// -- replacing somervilleNeighborhoods
+const neighborhoodLayer = L.geoJSON(cambridgeSomervilleNeighborhoods, {
+    label: l => l.feature.properties.NAME,
+    labelPos: 'cc',
+    labelStyle: { color: 'red', fontWeight: 'bold', whiteSpace: 'normal', minWidth: '120px', textAlign: 'center' },
+    labelPriority: 5e4,
+    style: polyColor
+}).addTo(map).bindPopup(l => `<b>${l.feature.properties.NAME}</b>`);
+
+// Source - https://stackoverflow.com/a/25806894
+// Posted by StudioTime, modified by community. See post 'Timeline' for change history
+// Retrieved 2026-03-02, License - CC BY-SA 3.0
+
+
+
+// 2. Global variable for your polygon layer
+var region;
+
+// 3. Load your GeoJSON file using Fetch
+// 1. Listen for the message from the parent
+window.addEventListener('message', (event) => {
+    // Check if the message has the action we expect
+    if (event.data && event.data.action === 'sync-resize-fly') {
+        const vc = event.data.vc; // This is the venue/location sent from the parent
+        
+        if (vc) {
+            console.log("Flying to location:", vc);
+            runSearch(vc); // Call your search function with the new location
+        }
+    }
+    }); 
+fetch('./somervilleNeighborhoods (2).geo.json') // Replace with your actual file path
+    .then(response => response.json())
+    .then(data => {
+        // Create the region layer from the file
+        region = L.geoJSON(data, {
+            style: { color: 'blue', weight: 2, fillOpacity: 0.1 }
+        }).addTo(map);
+
+        })
+    .catch(err => console.error("Error loading GeoJSON:", err));
+
+// 4. The Geosearch function
+function runSearch(vc) {
+    const provider = new window.GeoSearch.OpenStreetMapProvider();
+    
+    provider.search({ query: vc }).then(results => {
+        results.forEach(result => {
+            const x = result.x; // Longitude
+            const y = result.y; // Latitude
+            
+            // Create temporary marker for the check
+            var marker = L.marker([y, x]);
+
+            // 5. Check if marker is inside the region
+            let isInside = false;
+            
+            // First check the bounding box (faster performance)
+            if (region.getBounds().contains(marker.getLatLng())) {
+                region.eachLayer(function(layer) {
+                    if (isMarkerInsidePolygon(marker, layer)) {
+                        isInside = true;
+                    }
+                });
+            }
+
+            if (isInside) {
+                console.log('Location found INSIDE region:', result.label);
+                marker.addTo(map)
+                      .bindPopup("<b>Located in Region</b><br>" + result.label)
+                      .openPopup();
+            } else {
+                console.log('Location found OUTSIDE region.');
+                // Optional: add it anyway but with different color/style
+            }
+        });
+    });
+}
+
+// 6. Point-in-Polygon Math Tool
+function isMarkerInsidePolygon(marker, poly) {
+    var pt = marker.getLatLng();
+    var x = pt.lat, y = pt.lng;
+    
+    // Get coordinates (handles MultiPolygons by checking nested arrays)
+    var coords = poly.getLatLngs();
+    if (Array.isArray(coords[0]) && !coords[0].lat) {
+        coords = coords[0]; // Drill down into MultiPolygon array
+    }
+
+    var inside = false;
+    for (var i = 0, j = coords.length - 1; i < coords.length; j = i++) {
+        var xi = coords[i].lat, yi = coords[i].lng;
+        var xj = coords[j].lat, yj = coords[j].lng;
+
+        var intersect = ((yi > y) !== (yj > y)) &&
+            (x < ((xj - xi) * (y - yi) / (yj - yi) + xi));
+        if (intersect) inside = !inside;
+    }
+    return inside;
+}
+
+
+
+  
+  
+
+    // CONFIG: Fluidity settings
+    map.options.zoomSnap = 0; 
+    map.options.zoomDelta = 0.1;
+
+    // SYNC: Matches your 0.8s CSS transition
+    let startTime = performance.now();
+    function syncExpansion(now) {
+        map.invalidateSize({ animate: false, pan: false });
+        if (map._renderer) map._renderer._update();
+        if (now - startTime < 600) {
+            requestAnimationFrame(syncExpansion);
+        } else {
+            map.invalidateSize();
+            setTimeout(startLiquidFlight, 50);
+        }
+    }
+    requestAnimationFrame(syncExpansion);
+
+    function startLiquidFlight() {
+        let targetLayer;
+        
+        // Find specific neighborhood if ID was sent
+        if (requestedId) {
+            neighborhoodLayer.eachLayer(layer => {
+                if (layer.feature.properties && layer.feature.properties.OBJECTID === requestedId) {
+                    targetLayer = layer;
+                }
+            });
+        }
+
+        // 6. THE FLIGHT: Fly to specific layer OR Full Map if ID is missing
+        // neighborhoodLayer.getBounds() shows the entire city
+        const bounds = targetLayer ? targetLayer.getBounds() : neighborhoodLayer.getBounds();
+        
+        map.flyToBounds(bounds, {
+            padding: [40, 40],
+            duration: 2.5,
+            easeLinearity: 0.05,
+            noMoveStart: true
+        });
+
+        // 7. THE ARRIVAL: Auto-activate the D3 path for the specific ID
+        if (targetLayer) {
+            map.once('moveend', () => {
+                const d3Target = d3.selectAll("path.neighborhood")
+                    .filter(d => d && d.properties && d.properties.OBJECTID === requestedId);
+                
+                if (!d3Target.empty()) {
+                    const node = d3Target.node();
+                    const handler = d3.select(node).on('click');
+                    if (handler) handler.call(node, d3.select(node).datum());
+                }
+            });
+        }
+    }
+
+
+
+
+
+
+
+</script>
+
+    </body>
+</html>     

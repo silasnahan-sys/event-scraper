@@ -1,0 +1,264 @@
+/**
+ * Navigation functionality
+ */
+(function () {
+    'use strict';
+
+    // Mobile menu toggle - get all hamburger buttons
+    const navToggles = document.querySelectorAll('.menu-toggle');
+    const navMenu = document.querySelector('.nav-menu');
+    const mainNavigation = document.querySelector('.main-navigation');
+    const hamburgerOverlay = document.querySelector('.hamburger-menu-overlay');
+    const headerSearch = document.querySelector('.header-search.mobile-search');
+    const body = document.body;
+
+    // Toggle hamburger dropdown menu
+    function toggleHamburgerMenu(clickedToggle) {
+        const menuToggleWrapper = clickedToggle ? clickedToggle.closest('.menu-toggle-wrapper') : null;
+        const hamburgerContent = menuToggleWrapper ? menuToggleWrapper.querySelector('.hamburger-menu-content') : null;
+        
+        if (hamburgerOverlay && menuToggleWrapper) {
+            const isActive = hamburgerOverlay.classList.contains('active');
+            
+            if (isActive) {
+                hamburgerOverlay.classList.remove('active');
+                menuToggleWrapper.classList.remove('active');
+                body.style.overflow = '';
+
+                if (headerSearch) {
+                    headerSearch.classList.remove('nav-active');
+                }
+                
+                // Reset positioning
+                if (hamburgerContent) {
+                    hamburgerContent.style.top = '';
+                    hamburgerContent.style.left = '';
+                    hamburgerContent.style.right = '';
+                    hamburgerContent.style.width = '';
+                }
+            } else {
+                hamburgerOverlay.classList.add('active');
+                menuToggleWrapper.classList.add('active');
+                body.style.overflow = 'hidden';
+
+                if (headerSearch) {
+                    headerSearch.classList.add('nav-active');
+                }
+                
+                // Position menu relative to button
+                if (hamburgerContent && clickedToggle) {
+                    const buttonRect = clickedToggle.getBoundingClientRect();
+                    const menuWidth = mainNavigation ? mainNavigation.getBoundingClientRect().right - buttonRect.right : 320;
+                    
+                    if (window.innerWidth <= 768) {
+                        // Mobile: fixed positioning
+                        hamburgerContent.style.position = 'fixed';
+                        hamburgerContent.style.top = buttonRect.top + 'px';
+                        hamburgerContent.style.left = buttonRect.right + 'px';
+                        hamburgerContent.style.right = 'auto';
+                        hamburgerContent.style.width = menuWidth + 'px';
+                    } else {
+                        // Desktop: absolute positioning
+                        hamburgerContent.style.position = 'absolute';
+                        hamburgerContent.style.top = '0';
+                        hamburgerContent.style.left = '28px';
+                        hamburgerContent.style.right = 'auto';
+                        hamburgerContent.style.width = '460px';
+                    }
+                }
+            }
+        }
+    }
+
+    // Close hamburger menu
+    function closeHamburgerMenu() {
+        // Close all active menu toggle wrappers
+        const allMenuWrappers = document.querySelectorAll('.menu-toggle-wrapper');
+        allMenuWrappers.forEach(function(wrapper) {
+            wrapper.classList.remove('active');
+        });
+        
+        // Close overlay
+        if (hamburgerOverlay) {
+            hamburgerOverlay.classList.remove('active');
+        }
+        
+        // Reset body overflow
+        body.style.overflow = '';
+        
+        // Reset all hamburger content positioning
+        const allHamburgerContents = document.querySelectorAll('.hamburger-menu-content');
+        allHamburgerContents.forEach(function(content) {
+            if (window.innerWidth <= 768) {
+                content.style.top = '';
+                content.style.left = '';
+                content.style.right = '';
+                content.style.width = '';
+            }
+        });
+        
+        // Close main navigation on mobile
+        if (mainNavigation && window.innerWidth <= 768) {
+            mainNavigation.classList.remove('toggled');
+        }
+    }
+
+    // Hamburger menu toggle - handle all hamburger buttons
+    navToggles.forEach(function(navToggle) {
+        navToggle.addEventListener('click', function (e) {
+            e.stopPropagation();
+            toggleHamburgerMenu(navToggle);
+            
+            // Also toggle main navigation on mobile
+            if (mainNavigation && window.innerWidth <= 768) {
+                mainNavigation.classList.toggle('toggled');
+            }
+            
+            // Update aria-expanded attribute for all buttons
+            const isExpanded = navToggle.getAttribute('aria-expanded') === 'true';
+            navToggles.forEach(function(toggle) {
+                toggle.setAttribute('aria-expanded', !isExpanded);
+            });
+        });
+    });
+
+    // Handle hamburger menu item clicks - use bubble phase to allow link to work first
+    document.addEventListener('click', function(e) {
+        const menuItem = e.target.closest('.hamburger-menu-item');
+        if (menuItem && menuItem.tagName === 'A') {
+            // Check if this is a city preference item - let city-preference.js handle it
+            if (menuItem.classList.contains('hamburger-menu-city-preference')) {
+                // Let city preference handler deal with it (it will preventDefault)
+                return;
+            }
+            
+            // This is a regular hamburger menu link (page link or mailto)
+            // Get href to check if it's a mailto link
+            const href = menuItem.getAttribute('href');
+            const isMailto = href && href.indexOf('mailto:') === 0;
+            
+            // Stop propagation to prevent overlay from interfering AFTER link works
+            // Don't prevent default - let browser handle the link naturally first
+            e.stopPropagation();
+            
+            // Close menu - use setTimeout for mailto to allow mailto to trigger first
+            if (isMailto) {
+                // For mailto links, delay closing menu slightly to allow mailto to open
+                setTimeout(function() {
+                    closeHamburgerMenu();
+                    navToggles.forEach(function(toggle) {
+                        toggle.setAttribute('aria-expanded', 'false');
+                    });
+                }, 100);
+            } else {
+                // For page links, close menu immediately (browser will navigate)
+                closeHamburgerMenu();
+                navToggles.forEach(function(toggle) {
+                    toggle.setAttribute('aria-expanded', 'false');
+                });
+            }
+            
+            // IMPORTANT: Don't prevent default - let browser handle link naturally
+            // The default action happens during target phase, before bubble phase
+            // So even though we stop propagation in bubble phase, default already happened
+        }
+    }); // Bubble phase (default) - runs after target phase
+    
+    // Close menu when clicking overlay (outside menu)
+    if (hamburgerOverlay) {
+        hamburgerOverlay.addEventListener('click', function (e) {
+            // Don't close if clicking on menu content or any links
+            const clickedMenuContent = e.target.closest('.hamburger-menu-content');
+            const clickedLink = e.target.closest('a');
+            const clickedMenuItem = e.target.closest('.hamburger-menu-item');
+            
+            if (clickedMenuContent || clickedLink || clickedMenuItem) {
+                // Allow links to work normally - don't close overlay
+                return;
+            }
+            
+            // Only close if clicking directly on the overlay background
+            if (e.target === hamburgerOverlay) {
+                closeHamburgerMenu();
+                navToggles.forEach(function(toggle) {
+                    toggle.setAttribute('aria-expanded', 'false');
+                });
+            }
+        });
+    }
+    
+    // Handle clicks on menu content (separators, etc.) - stop propagation for non-links
+    // This prevents overlay from closing when clicking non-link elements in menu
+    document.addEventListener('click', function(e) {
+        const menuContent = e.target.closest('.hamburger-menu-content');
+        if (menuContent) {
+            const clickedLink = e.target.closest('a');
+            // Only stop propagation for non-link elements (like separators)
+            // Links are already handled by the menu item handler above
+            if (!clickedLink) {
+            e.stopPropagation();
+            }
+        }
+    }, true);
+    
+    // Close menu on escape key
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && hamburgerOverlay && hamburgerOverlay.classList.contains('active')) {
+            closeHamburgerMenu();
+            navToggles.forEach(function(toggle) {
+                toggle.setAttribute('aria-expanded', 'false');
+            });
+        }
+    });
+    
+    // Handle sub-menu toggles on mobile (for regular navigation)
+    if (navMenu) {
+        const menuItemsWithChildren = navMenu.querySelectorAll('.menu-item-has-children > a');
+        
+        menuItemsWithChildren.forEach(function (menuLink) {
+            menuLink.addEventListener('click', function (e) {
+                // Only prevent default on mobile for items with sub-menus
+                if (window.innerWidth <= 768) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const menuItem = this.parentElement;
+                    menuItem.classList.toggle('active');
+                }
+            });
+        });
+        
+        // Ensure regular menu links (without children) work normally on mobile
+        const regularMenuLinks = navMenu.querySelectorAll('li:not(.menu-item-has-children) > a');
+        regularMenuLinks.forEach(function (menuLink) {
+            menuLink.addEventListener('click', function (e) {
+                // Allow normal navigation for links without sub-menus
+                // Don't prevent default - let the link navigate normally
+            });
+        });
+    }
+    
+    // Search toggle functionality
+    const searchToggle = document.querySelector('.search-toggle');
+    const searchFormWrapper = document.querySelector('.search-form-wrapper');
+    
+    if (searchToggle && searchFormWrapper) {
+        searchToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            searchFormWrapper.classList.toggle('active');
+        });
+        
+        // Close search when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!searchToggle.contains(e.target) && !searchFormWrapper.contains(e.target)) {
+                searchFormWrapper.classList.remove('active');
+            }
+        });
+        
+        // Close search on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && searchFormWrapper.classList.contains('active')) {
+                searchFormWrapper.classList.remove('active');
+            }
+        });
+    }
+})();

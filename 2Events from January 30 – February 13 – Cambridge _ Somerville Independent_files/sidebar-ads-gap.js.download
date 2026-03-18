@@ -1,0 +1,140 @@
+/**
+ * Force gap between sidebar ads
+ * This script ensures proper spacing between ads in the sidebar
+ * even if Advanced Ads plugin or other CSS tries to override it
+ */
+(function() {
+    'use strict';
+
+    function forceSidebarAdsGap() {
+        const container = document.querySelector('.advertisements-container');
+        if (!container) {
+            console.log('Sidebar ads gap: .advertisements-container not found');
+            return;
+        }
+
+        const children = Array.from(container.children);
+        console.log('Sidebar ads gap: Found', children.length, 'children');
+        
+        if (children.length <= 1) {
+            console.log('Sidebar ads gap: Only one or zero ads, no gap needed');
+            return;
+        }
+
+        // Method 1: Add padding-top to all children except first (MOST RELIABLE)
+        children.forEach((child, index) => {
+            if (index > 0) {
+                // Force padding-top using inline style (highest priority)
+                child.style.setProperty('padding-top', '20px', 'important');
+                child.style.setProperty('margin-top', '0', 'important');
+                console.log('Sidebar ads gap: Applied padding-top to child', index, child.className || child.tagName);
+            } else {
+                // Ensure first child has no padding-top
+                child.style.setProperty('padding-top', '0', 'important');
+            }
+
+            // Also set margin-bottom as backup (except last child)
+            if (index < children.length - 1) {
+                child.style.setProperty('margin-bottom', '20px', 'important');
+            } else {
+                child.style.setProperty('margin-bottom', '0', 'important');
+            }
+        });
+
+        // Method 2: Handle Advanced Ads plugin wrapper divs (direct children)
+        const advadsWrappers = Array.from(container.children).filter(child => {
+            return child.classList.contains('local-sidebar') || 
+                   child.classList.contains('local-highlight-wrapper') ||
+                   child.className.includes('advads') ||
+                   child.className.includes('local-');
+        });
+        
+        if (advadsWrappers.length > 0) {
+            console.log('Sidebar ads gap: Found', advadsWrappers.length, 'Advanced Ads wrappers');
+            advadsWrappers.forEach((wrapper, index) => {
+                const wrapperIndex = children.indexOf(wrapper);
+                
+                if (wrapperIndex > 0) {
+                    wrapper.style.setProperty('padding-top', '20px', 'important');
+                    wrapper.style.setProperty('margin-top', '0', 'important');
+                }
+                
+                if (wrapperIndex < children.length - 1) {
+                    wrapper.style.setProperty('margin-bottom', '20px', 'important');
+                } else {
+                    wrapper.style.setProperty('margin-bottom', '0', 'important');
+                }
+            });
+        }
+
+        // Method 3: Handle nested Advanced Ads structures
+        const allAdvadsElements = container.querySelectorAll('.local-sidebar, .local-highlight-wrapper, div[class*="advads"], div[class*="local-"]');
+        allAdvadsElements.forEach((element) => {
+            // Only process if it's a direct child or if it contains ads
+            if (element.parentElement === container || element.querySelector('a, img')) {
+                const siblings = Array.from(element.parentElement.children);
+                const elementIndex = siblings.indexOf(element);
+                
+                if (elementIndex > 0) {
+                    element.style.setProperty('padding-top', '20px', 'important');
+                    element.style.setProperty('margin-top', '0', 'important');
+                }
+            }
+        });
+
+        console.log('Sidebar ads gap: Gap application complete');
+    }
+
+    // Run on DOM ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Sidebar ads gap: DOMContentLoaded fired');
+            forceSidebarAdsGap();
+        });
+    } else {
+        console.log('Sidebar ads gap: DOM already ready');
+        forceSidebarAdsGap();
+    }
+
+    // Also run after delays to catch dynamically loaded ads
+    setTimeout(function() {
+        console.log('Sidebar ads gap: Running after 500ms delay');
+        forceSidebarAdsGap();
+    }, 500);
+    
+    setTimeout(function() {
+        console.log('Sidebar ads gap: Running after 1000ms delay');
+        forceSidebarAdsGap();
+    }, 1000);
+    
+    setTimeout(function() {
+        console.log('Sidebar ads gap: Running after 2000ms delay');
+        forceSidebarAdsGap();
+    }, 2000);
+
+    // Run when new content is added (for AJAX-loaded content)
+    if (typeof MutationObserver !== 'undefined') {
+        const observer = new MutationObserver(function(mutations) {
+            let shouldUpdate = false;
+            mutations.forEach(function(mutation) {
+                if (mutation.addedNodes.length > 0) {
+                    shouldUpdate = true;
+                }
+            });
+            if (shouldUpdate) {
+                console.log('Sidebar ads gap: MutationObserver detected changes');
+                setTimeout(forceSidebarAdsGap, 100);
+            }
+        });
+
+        const container = document.querySelector('.advertisements-container');
+        if (container) {
+            observer.observe(container, {
+                childList: true,
+                subtree: true
+            });
+            console.log('Sidebar ads gap: MutationObserver initialized');
+        }
+    }
+})();
+

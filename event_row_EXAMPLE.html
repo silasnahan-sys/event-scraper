@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>EVENT ROW EXAMPLE</title>
+</head>
+<body>
+<!--
+This is an example row in the listing
+
+The rows are defined by the an <li> tag (that's a list tag) and the class "tribe-common-g-row tribe-events-calendar-list__event-row"
+
+In this function
+    document.addEventListener('DOMContentLoaded', function () {
+
+This line reads in all of these rows
+    const eventRows = document.querySelectorAll('.tribe-events-calendar-list__event-row');
+
+This line reads
+
+        const dateTag = row.querySelector('.tribe-events-calendar-list__event-date-tag-datetime');
+
+-->
+
+<script>
+    function getAddress(element) {
+        const venueTitle = element.querySelector('.tribe-events-calendar-list__event-venue-title').innerText.trim();
+        const address = element.querySelector('.tribe-events-calendar-list__event-venue-address').innerText.trim();
+        alert('venue:'+venueTitle+', address:'+address)
+        
+        // Now you can call geocoder with the address
+    }
+     
+
+</script>
+
+
+<ul>
+<li class="tribe-common-g-row tribe-events-calendar-list__event-row" onclick="getAddress(this)">
+    <h4>CLICK THE LISTING</h4>
+    <div
+        class="tribe-events-calendar-list__event-date-tag tribe-common-g-col post-1181 tribe_events type-tribe_events status-publish hentry tribe_events_cat-event cat_event">
+        <!-- START OF WHAT GETS STORED to the dateTag variable -->
+        <time class="tribe-events-calendar-list__event-date-tag-datetime" datetime="2026-02-24" aria-hidden="true">
+            <span class="tribe-events-calendar-list__event-date-tag-weekday">
+                Tue </span>
+            <span class="tribe-events-calendar-list__event-date-tag-daynum tribe-common-h5 tribe-common-h4--min-medium">
+                24 </span>
+        </time>
+        <!-- END OF WHAT GETS STORED to the dateTag variable -->
+    </div>
+
+    <div class="tribe-events-calendar-list__event-wrapper tribe-common-g-col">
+        <article
+            class="tribe-events-calendar-list__event tribe-common-g-row tribe-common-g-row--gutters post-1181 tribe_events type-tribe_events status-publish hentry tribe_events_cat-event cat_event">
+
+            <div class="tribe-events-calendar-list__event-details tribe-common-g-col">
+
+                <header class="tribe-events-calendar-list__event-header">
+                    <h4 class="tribe-events-calendar-list__event-title tribe-common-h6 tribe-common-h4--min-medium">
+                        <a href="https://csindie.com/event/thotbot-implantation-center/"
+                            title="ThotBot Implantation Center" rel="bookmark"
+                            class="tribe-events-calendar-list__event-title-link tribe-common-anchor-thin">
+                            ThotBot Implantation Center </a>
+                    </h4>
+                    <div class="tribe-events-calendar-list__event-datetime-wrapper tribe-common-b2">
+                        <time class="tribe-events-calendar-list__event-datetime" datetime="2026-02-17">
+                            <span class="tribe-event-date-start">February 17 @ 3:00 pm</span> - <span
+                                class="tribe-event-date-end">March 31 @ 5:00 pm</span> </time>
+                    </div>
+                    <!-- START OF THE SECTION YOU WANT TO GET THE ADDRESS and THE VENUE TITLE -->
+                    <address class="tribe-events-calendar-list__event-venue tribe-common-b2">
+                        <span class="tribe-events-calendar-list__event-venue-title tribe-common-b2--bold">
+                            Bow Market </span>
+                        <span class="tribe-events-calendar-list__event-venue-address">
+                            1 Bow Market Way, Somerville, MA </span>
+                    </address>
+                    <!-- START OF THE SECTION YOU WANT TO GET THE ADDRESS and THE VENUE TITLE -->
+                </header>
+
+                <div class="tribe-events-calendar-list__event-description tribe-common-b2 tribe-common-a11y-hidden">
+                    <p>An immersive, interactive installation and a/v concert that invites just 14 participants per
+                        night into a meticulously designed Waiting Room before plunging them deeper into the dystopian
+                        ThotBot Storyworld.</p>
+                </div>
+
+            </div>
+        </article>
+    </div>
+
+</li>
+</ul>
+
+</body>
+</html>

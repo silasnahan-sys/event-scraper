@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+     <title>D3 + Labels + Cluster LayerSupport</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+    <!--
+      #SILAS you are loading leaflet twice below - REMOVE 1
+    -->
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>       
+    <!-- <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script> -->
+    <link rel="stylesheet" href="./leaflet-mapwithlabels.css" />
+    <script src="./leaflet-mapwithlabels.js"></script>
+    <link rel="stylesheet" href="./leaflet.awesome-markers.css">
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.css" rel="stylesheet">
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet-geosearch@3.0.0/dist/geosearch.css"
+/>
+<script src="https://unpkg.com/leaflet-geosearch@latest/dist/bundle.min.js"></script>
+    <style>
+        
+        body { margin: 0; padding: 0; }
+        #map_div { height: 600px; width: 100%; }
+        .info { padding: 6px 8px; font: 14px/16px Arial; background: white; border-radius: 5px; box-shadow: 0 0 15px rgba(0,0,0,0.2); }
+        .legend i { width: 18px; height: 18px; float: left; margin-right: 8px; opacity: 0.7; }
+    html { height: 100% }
+        body { height: 100%; margin: 0; padding: 0 }
+        #mapid { height: 600px; width: 100%;  height: 100% }
+               html, body, #mapid { height: 100%; margin: 0; padding: 0; background: #f0f0f0; }
+        
+        path.neighborhood { 
+            cursor: pointer; 
+            transition: fill-opacity 0.3s ease; 
+        }
+.leaflet-marker-icon, .leaflet-marker-shadow, .leaflet-image-layer, .leaflet-pane > svg path, .leaflet-tile-container {
+				pointer-events: visible;
+			}
+
+ /* Grayscale Mode: Dims the map tiles but keeps markers bright */
+.map-highlight-active .leaflet-tile-pane {
+    filter: grayscale(100%) brightness(0.4) contrast(1.2);
+}
+
+/* Cluster Colors */
+.cluster-music div { background-color: #D2232A; color: white; }
+.cluster-theater div { background-color: #3296ff; color: white; }
+.cluster-community div { background-color: #2ecc71; color: white; }
+.cluster-west div { background-color: #f1c40f; color: black; }
+
+/* Pulse effect for filtered markers */
+.map-highlight-active .leaflet-marker-icon {
+    filter: drop-shadow(0 0 10px #fff);
+}           
+
+        /* High-visibility label styling - EXTRA BOLD */
+        .d3-label {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-weight: 900;
+            fill: #111;
+            text-anchor: middle;
+            pointer-events: none;       
+            text-shadow: 2px 2px 0px #fff, -2px -2px 0px #fff, 2px -2px 0px #fff, -2px 2px 0px #fff;
+        }
+          html, body, #map_div {
+    height: 100% !important;
+    width: 100% !important;
+    margin: 0;
+    padding: 0;
+    -webkit-backface-visibility: hidden; /* Fixes "shimmer" on some browsers */
+}   
+
+/* Add this to your map page styles */
+
+
+.leaflet-zoom-animated {
+    display: block !important; /* Forces the SVG layer to stay rendered */
+}
+
+
+.leaflet-tile-container {
+    transition: opacity 0.2s linear; /* Makes tile loading less jarring */
+}
+
+/* 1. Ensure the overlay pane is correctly layered */
+.leaflet-overlay-pane {
+    z-index: 400 !important;
+}
+
+
+/* 3. Re-enable mouse only for red circles and neighborhoods */
+
+
+/* Ensure the labels and polygons stay on the same rendering plane */
+.leaflet-pane {
+    z-index: 400;
+}
+
+/* Prevents the SVG renderer from clipping polygons during a resize */
+/* Force the SVG container to always fill the available space */
+/* Force the SVG container to fill the 100% space of the expanded iframe */
+.s{
+    width: 100% !important;
+    height: 100% !important;
+    transform-origin: 0 0 !important;
+    overflow: visible !important;
+}
+
+/* Ensure labels don't "stutter" during the move */
+.leaflet-label {
+    will-change: transform, top, left;
+    transition: none !important;
+}
+/* Ensure the path (polygon) doesn't disappear or flicker */
+/* Keep the polygon fill stable */
+path.leaflet-interactive {
+    /* Prevents borders from getting thick and overlapping during zoom */
+    vector-effect: non-scaling-stroke !important;
+    stroke-width: 1px !important; 
+}
+
+/* 1. Desaturate the map when a filter is active */
+#mapID, #map, #mapID { transition: all 0.6s ease; }
+
+.map-highlight-active .leaflet-tile-pane {
+    filter: grayscale(100%) brightness(0.5) contrast(1.2);
+}
+
+/* 2. Custom Cluster Colors */
+.cluster-music { background-color: rgba(210, 35, 42, 0.6); } /* Red */
+.cluster-music div { background-color: rgba(210, 35, 42, 1); color: white; }
+
+.cluster-theater { background-color: rgba(50, 150, 255, 0.6); } /* Blue */
+.cluster-theater div { background-color: rgba(50, 150, 255, 1); color: white; }
+
+/* 3. Glow effect for active markers */
+.map-highlight-active .leaflet-marker-icon {
+    filter: drop-shadow(0 0 8px #fff);
+}
+
+
+    #map { height: 100vh; width: 100%; transition: filter 0.6s ease; }
+
+    /* --- "Mode" Apparency Styling --- */
+    /* When a filter is active, dim the background to make markers pop */
+    .map-highlight-active .leaflet-tile-pane {
+        filter: grayscale(100%) brightness(0.4) contrast(1.2);
+    }
+
+    /* Base Cluster Styling */
+    .marker-cluster { background-clip: padding-box; border-radius: 20px; }
+    .marker-cluster div {
+        width: 30px; height: 30px; margin-left: 5px; margin-top: 5px;
+        text-align: center; border-radius: 15px; font: 12px "Helvetica Neue", Arial;
+    }
+
+    /* Category Specific Colors */
+    .cluster-music div { background-color: #D2232A; color: white; box-shadow: 0 0 10px #D2232A; }
+    .cluster-theater div { background-color: #3296ff; color: white; box-shadow: 0 0 10px #3296ff; }
+    .cluster-community div { background-color: #2ecc71; color: white; box-shadow: 0 0 10px #2ecc71; }
+    .cluster-west div { background-color: #f1c40f; color: black; box-shadow: 0 0 10px #f1c40f; }
+
+
+/* "Music/Theater Mode" Map: Dims the background to make clusters pop */
+#map.highlight-mode .leaflet-tile-pane {
+    filter: grayscale(100%) brightness(0.6) sepia(20%);
+}
+
+/* Keep the markers and clusters at full color and brightness */
+#map.highlight-mode .leaflet-marker-pane, 
+#map.highlight-mode .leaflet-cluster-anim {
+    filter: brightness(1.2) drop-shadow(0 0 10px rgba(255,255,255,0.5));
+}
+
+   </style>
+
+   
+        <link rel="stylesheet" href="./MarkerCluster.css" />
+        <link rel="stylesheet" href="./MarkerCluster.Default.css" />
+        <script src="./leaflet.markercluster-src.js"></script>
+        <!-- #SILAS <script src="./leaflet.markercluster.freezable.js"></script> -->
+        <!-- After Leaflet script -->
+        <script src="https://unpkg.com/leaflet.markercluster.freezable@1.0.0/dist/leaflet.markercluster.freezable.js"></script>
+
+        <!-- #SILAS This looks like the wrong file name to me -->
+        <!-- <script src="./LDeflate (1).js"></script> -->
+        <!-- #SILAS use the online version -- this is from the github site -->
+        <script src="https://unpkg.com/Leaflet.Deflate/dist/L.Deflate.js"></script>
+        <script src="./leaflet.awesome-markers.js"></script>
+        <!-- #SILAS I couldn't find the local version so I'm using the online version below -->
+        <!-- <script src="./leaflet.markercluster.layersupport.js"></script> -->
+        <!-- After Leaflet and Leaflet.markercluster scripts -->
+        <script src="https://unpkg.com/leaflet.markercluster.layersupport@2.0.1/dist/leaflet.markercluster.layersupport.js"></script>
+
+</head>
+<body>
+    <!--
+    #SILAS:
+    -- you have two divs with id map_canvas -- REMOVE ONE OF THEM
+    -- you are adding the ./leaflet.markercluster-src.js THREE times -- REMOVE THE SECOND AND THIRD TIMES
+    
+    -->
+    <div id="mapid"></div>
+    <div id="geocodeDebug" style="position:absolute;top:10px;right:10px;z-index:9999;background:rgba(255,255,255,0.9);padding:8px;max-width:240px;font-size:12px;line-height:1.2;border:1px solid rgba(0,0,0,0.2);border-radius:5px;pointer-events:none;">geocode logs...</div>
+    <!-- #SILAS this next line is not a script it is just a web site -->
+    <!-- <script src="https://d3js.org"></script> -->
+
+    <!-- <script src="./leaflet.markercluster-src.js"></script> -->
+    <script src="L.D3SvgOverlay.min.js"></script>
+    <!-- #SILAS - you're already loading this with a different name leaflet-mapwithlabels.js (there's a HYPHEN instead of a period)-->
+    <!-- <script src="./leaflet.mapwithlabels.js"></script> -->
+    <!-- div id="mapid"></div -->
+
+    <!-- #SILAS you already load leaflet.js in the head - REMOVE THIS NEXT ONE -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/leaflet.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.9/d3.min.js"></script>
+
+
+
+    <!-- <script src="./leaflet.markercluster-src.js"></script> -->
+    <!-- Second: The LayerSupport sub-plugin (depends on the one above) -->
+
+    <!-- Third: D3 Overlay -->
+    <script src="L.D3SvgOverlay.min.js"></script>
+    <!-- Fourth: Your local Label plugin (Fix path if needed) -->
+
+    <!-- #SILAS - you are loading this above already -- REMOVE THIS ONE-->
+    <!-- <script src="./leaflet.mapwithlabels.js"></script> -->
+
+    <!-- #SILAS - import the cambridgeSomervilleNeighborhoods with a var so you can use this with the marker cluster-->
+    <!-- this stores the cambridgeSomervilleNeighborhoods to a var named "cambridgeSomervilleNeighborhoods"-->
+    <script src="./cambridgeSomervilleNeighborhoods.geojson.js"></script>    
+
+<script>
+    // Report runtime errors back to parent so we can diagnose why the iframe map did not render.
+    window.addEventListener('error', function(e) {
+        if (window.parent && window.parent !== window) {
+            window.parent.postMessage({ action: 'iframe-error', message: e.message, filename: e.filename, lineno: e.lineno, colno: e.colno }, '*');
+        }
+    });
+    window.addEventListener('unhandledrejection', function(e) {
+        if (window.parent && window.parent !== window) {
+            window.parent.postMessage({ action: 'iframe-error', message: e.reason && e.reason.message ? e.reason.message : String(e.reason) }, '*');
+        }
+    });
+
+    // #SILAS -- adding the polycolor function here. This creates the random colors that are given to each neighborhood
+    // -- if you search polycolor in this html, you'll see where this function is called
+    function polyColor(f) {
+            let p = f.properties.Nepesseg;
+            let r = Math.random() * 150 + 100;
+            let g = Math.random() * 150 + 100;
+            let b = Math.random() * 150 + 100;
+            return { fillColor: `rgb(${r},${g},${b})`, fillOpacity: .7, color: 'black', opacity: 1, weight: 1 };
+    }
+
+
+    // 1. Initialize Map
+    var map;
+    try {
+        map = L.mapWithLabels('mapid', { 
+            center: [42.3840352, -71.1134377], 
+            zoom: 13,
+                            zoomSnap: 0,      // ALLOWS FRACTIONAL ZOOM (The D3 secret)
+    zoomDelta: 0.1,    // Smoother mouse wheel
+    wheelPxPerZoomLevel: 120
+        });
+    } catch (e) {
+        console.warn("mapWithLabels plugin not found, using standard Leaflet map.");
+        map = L.map('mapid').setView([42.3840352, -71.1134377], 13);
+    }
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+  // --- PART 1: SVG CIRCLES (Global View) ---
+    L.svg().addTo(map);
+
+    var markers = [
+        {name: "Davis Square", lat: 42.3967, long: -71.1223},
+  {name: "Union Square", lat: 42.3797, long: -71.0942},
+  {name: "Porter Square", lat: 42.3884, long: -71.1190}
+];
+
+    // Select the Leaflet-generated SVG
+    var svg = d3.select("#mapid").select("svg");
+    
+
+    var circles = svg.selectAll("circle")
+    .data(markers)
+    .enter()
+    .append("circle")
+    // SET POSITION FIRST so they aren't at 0,0
+    .attr("cx", d => map.latLngToLayerPoint([d.lat, d.long]).x)
+    .attr("cy", d => map.latLngToLayerPoint([d.lat, d.long]).y)
+    .attr("r", 0) 
+    .style("fill", "red")
+    .attr("stroke", "white")
+    .attr("stroke-width", 2)
+    .attr("fill-opacity", .6)
+    .transition()
+    .duration(1000)
+    .attr("r", 14);
+
+let ticking = false;
+
+function updateEverything() {
+    if (!ticking) {
+        window.requestAnimationFrame(function() {
+            svg.selectAll("circle") // Selects all red dots
+                .attr("cx", d => map.latLngToLayerPoint([d.lat, d.long]).x)
+                .attr("cy", d => map.latLngToLayerPoint([d.lat, d.long]).y);
+            
+            // Keep circles on top of neighborhood SVG by re-appending them to the end of the SVG
+            svg.selectAll("circle").each(function() {
+                if (this.parentNode) this.parentNode.appendChild(this);
+            });
+            ticking = false;
+        });
+        ticking = true;
+    }
+}
+
+
+
+// 2. Re-attach the events for smooth "Liquid" movement
+map.on("move viewreset", updateEverything);
+updateEverything();
+
+
+var d3Overlay = L.d3SvgOverlay(function(sel, proj) {
+    var paths = sel.selectAll('path').data(neighborhoodData);
+    
+    paths.enter()
+        .append('path')
+        .attr('class', 'neighborhood')
+        .attr('stroke', 'black')
+        .attr('fill', () => d3.hsl(Math.random() * 360, 0.7, 0.5))
+        .attr('fill-opacity', 0.4)
+        .on('mouseover', function(d) {
+            d3.select(this).transition().duration(150)
+                .attr('fill-opacity', 0.8)
+                .attr('stroke-width', 3 / proj.scale);
+        })
+        .on('mouseout', function(d) {
+            d3.select(this).transition().duration(150)
+                .attr('fill-opacity', 0.4)
+                .attr('stroke-width', 1 / proj.scale);
+        })
+        .on('click', function(d) {
+            map.fitBounds(L.geoJson(d).getBounds());
+        });
+
+    paths.attr('d', proj.pathFromGeojson)
+         .attr('stroke-width', 1 / proj.scale);
+
+
+        // --- DRAW LABELS ---
+        var labels = sel.selectAll('text').data(neighborhoodData);
+        
+ 
+        labels.each(function(d) {
+            // Find center of each polygon for label placement
+            var center = L.geoJson(d).getBounds().getCenter();
+            var point = proj.latLngToLayerPoint(center);
+            d3.select(this)
+                .attr('x', point.x)
+                .attr('y', point.y)
+                .style('font-size', (14 / proj.scale) + 'px');
+        });
+    });
+
+    // 3. LOAD DATA AND ACTIVATE
+    // IMPORTANT: Ensure this filename matches your .geojson file exactly!
+    d3.json("./somervilleNeighborhoods (2).geo.json", function(error, data) {
+        if (error) {
+            console.error("GeoJSON failed to load. Check file path or use a local server.", error);
+            return;
+        }
+        
+        neighborhoodData = data.features;
+        
+        // Add the D3 layer to the map now that we have data
+              neighborhoodData = data.features;
+    d3Overlay.addTo(map);
+    updateEverything(); // Final sync
+
+    });
+// 2. Initialize MarkerCluster LayerSupport with Dynamic Colors
+var mcgLayerSupportGroup = L.markerClusterGroup.layerSupport({
+    iconCreateFunction: function (cluster) {
+        var markers = cluster.getAllChildMarkers();
+        var counts = {};
+        var maxCat = 'default';
+        var maxCount = 0;
+
+        // Count occurrences of each category in this specific cluster
+        markers.forEach(function(m) {
+            var cat = m.options.category || 'default';
+            counts[cat] = (counts[cat] || 0) + 1;
+            
+            // Priority/Majority Logic: Pick the category with the most markers
+            if (counts[cat] > maxCount) {
+                maxCount = counts[cat];
+                maxCat = cat;
+            }
+        });
+
+        return L.divIcon({
+            html: '<div><span>' + cluster.getChildCount() + '</span></div>',
+            // The cluster now takes the color of the majority category
+            className: 'marker-cluster cluster-' + maxCat,
+            iconSize: new L.point(40, 40)
+        });
+    }
+});
+
+mcgLayerSupportGroup.addTo(map);
+
+// 3. Define LayerGroups
+var theater = L.layerGroup();
+var community = L.layerGroup();
+var music = L.layerGroup();
+var WestCambridge = L.layerGroup();
+
+// 4. IMPORTANT: Check-in the layers to the support group
+mcgLayerSupportGroup.checkIn([theater, community, music, WestCambridge]);
+
+// 5. Event marker Helpers (with per-day layers)
+const dayLayers = {};             // { '2026-02-24': L.layerGroup(), ... }
+const geocodeCache = new Map();   // address -> {lat, lng}
+const provider = new window.GeoSearch.OpenStreetMapProvider({
+    params: {
+        countrycodes: 'us',
+        limit: 1
+    }
+});
+
+function setGeocodeDebug(text) {
+    const el = document.getElementById('geocodeDebug');
+    if (el) el.textContent = text;
+}
+
+function getDayLayer(date) {
+    if (!date) return null;
+    if (typeof overlayMaps === 'undefined' || !overlayMaps) {
+        overlayMaps = {};
+    }
+
+    if (!dayLayers[date]) {
+        dayLayers[date] = L.layerGroup();
+        overlayMaps[`Events ${date}`] = dayLayers[date];
+        dayLayers[date].addTo(map); // show the layer immediately when created
+        refreshLayerControl();
+    }
+    return dayLayers[date];
+}
+
+function refreshLayerControl() {
+    if (window.dayLayerControl) {
+        map.removeControl(window.dayLayerControl);
+    }
+    window.dayLayerControl = L.control.layers(null, overlayMaps, { collapsed: false }).addTo(map);
+}
+
+function normalizeAddress(address) {
+    if (!address) return '';
+
+    // Strip newlines/extra spaces, remove parenthetical bits, and normalize punctuation
+    let normalized = address
+        .replace(/\s+/g, ' ')
+        .replace(/\s*\(.*?\)\s*/g, ' ')          // remove parenthesized notes
+        .replace(/[–—]/g, ',')                       // normalize dashes to commas
+        .replace(/\s*,\s*/g, ', ')                 // normalize comma spacing
+        .replace(/\s*;\s*/g, ', ')                 // normalize semicolons too
+        .replace(/\s*&\s*/g, ' & ')               // normalize ampersands
+        .trim()
+        .replace(/,+$/, '')                         // strip trailing commas
+        .replace(/\.+$/, '');                        // strip trailing periods
+
+    // Expand common abbreviations for better geocoding
+    // IMPORTANT: Remove periods BEFORE expanding abbreviations to avoid double periods
+    normalized = normalized
+        .replace(/\bSt\.?\b/gi, 'Street')
+        .replace(/\bAve\.?\b/gi, 'Avenue')
+        .replace(/\bRd\.?\b/gi, 'Road')
+        .replace(/\bBlvd\.?\b/gi, 'Boulevard')
+        .replace(/\bPl\.?\b/gi, 'Place')
+        .replace(/\bSq\.?\b/gi, 'Square')
+        .replace(/\bDr\.?\b/gi, 'Drive')
+        .replace(/\bLn\.?\b/gi, 'Lane')
+        .replace(/\bTer\.?\b/gi, 'Terrace')
+        .replace(/\bPkwy\.?\b/gi, 'Parkway')
+        // Also handle state abbreviations
+        .replace(/\bMA\.?\b/gi, 'MA')
+        .replace(/\bMass\.?\b/gi, 'MA');
+
+    // Clean up any remaining double periods or spaces
+    normalized = normalized
+        .replace(/\.+/g, '.')                       // collapse multiple periods to single
+        .replace(/\s+/g, ' ')                       // collapse multiple spaces
+        .trim();
+
+    // Check if a city/state already exists (any MA city or state abbreviation/name)
+    const hasCityState = /\b(Cambridge|Somerville|Boston|Medford|Brookline|Newton|Watertown|Waltham|Arlington|Belmont|Lexington|Winchester|Malden|Everett|Salem|Lynn|Quincy|Milton|Norwood|MA|Massachusetts)\b/i.test(normalized);
+    
+    // Only add Cambridge, MA if NO city/state detected at all
+    if (!hasCityState) {
+        normalized += ', Cambridge, MA';
+    }
+    
+    // If it has a city but missing MA state, add MA
+    if (!/(MA|Massachusetts)\b/i.test(normalized)) {
+        normalized += ', MA';
+    }
+
+    return normalized;
+}
+
+function geocodeAddress(address) {
+    if (!address) return Promise.resolve(null);
+
+    const normalized = normalizeAddress(address);
+    if (geocodeCache.has(normalized)) return Promise.resolve(geocodeCache.get(normalized));
+
+    const debugText = `geocode: ${normalized}`;
+    console.debug('[MapIframe] geocodeAddress', { original: address, normalized });
+    setGeocodeDebug(debugText);
+
+    // Add delay to respect Nominatim rate limits (1 req/sec)
+    return new Promise(resolve => setTimeout(resolve, 300)).then(() => {
+        return provider.search({ query: normalized }).then(results => {
+            if (!results || !results.length) {
+                console.warn('[MapIframe] geocodeAddress no results', normalized);
+                setGeocodeDebug(`no results: ${normalized} (fallback)`);
+                return nominatimGeocode(normalized);
+            }
+            const coords = { lat: results[0].y, lng: results[0].x };
+            geocodeCache.set(normalized, coords);
+            return coords;
+        }).catch(err => {
+            console.error('[MapIframe] geocodeAddress error (geosearch failed)', normalized, err);
+            setGeocodeDebug(`geosearch error: ${normalized} (fallback)`);
+            return nominatimGeocode(normalized);
+        });
+    });
+}
+
+function nominatimGeocode(query) {
+    // Try multiple query variations to handle edge cases
+    const variations = [
+        query,                                      // original
+        query.replace(/, MA$/i, ''),               // without MA
+        query.replace(/\d+\s+/, ''),               // without building number (just street name)
+        query.replace(/,[^,]*MA$/, ''),            // without city & MA
+        query.split(',')[0],                        // just the street address part
+    ];
+
+    // Remove duplicates
+    const uniqueVariations = [...new Set(variations)].filter(v => v && v.trim().length > 3);
+
+    const tryVariation = (idx) => {
+        if (idx >= uniqueVariations.length) {
+            console.warn('[MapIframe] nominatim exhausted all variations for:', query);
+            setGeocodeDebug(`exhausted: ${query}`);
+            return Promise.resolve(null);
+        }
+
+        const q = uniqueVariations[idx].trim();
+        const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(q)}`;
+        
+        console.debug('[MapIframe] trying nominatim variation', idx + 1, '/', uniqueVariations.length, ':', q);
+
+        return fetch(url, {
+            headers: {
+                'Accept': 'application/json',
+                'User-Agent': 'Cambridge-Somerville-Map/1.0 (+http://127.0.0.1:5500)'
+            }
+        })
+            .then(r => {
+                if (!r.ok) {
+                    console.warn(`[MapIframe] nominatim HTTP ${r.status} for:`, q);
+                    return tryVariation(idx + 1);  // try next variation
+                }
+                return r.json();
+            })
+            .then(results => {
+                if (!Array.isArray(results) || !results.length) {
+                    console.debug('[MapIframe] nominatim no results for variation', q);
+                    return tryVariation(idx + 1);  // try next variation
+                }
+                const coords = { lat: parseFloat(results[0].lat), lng: parseFloat(results[0].lon) };
+                geocodeCache.set(query, coords);
+                console.debug('[MapIframe] nominatim success (var', idx + 1, '):', q, '→', coords);
+                setGeocodeDebug(`ok (v${idx + 1}): ${q}`);
+                return coords;
+            })
+            .catch(err => {
+                console.warn('[MapIframe] nominatim variation error', q, err);
+                return tryVariation(idx + 1);  // try next variation
+            });
+    };
+
+    return tryVariation(0);
+}
+
+function createEventMarker(lat, lng, title, cat, group) {
+    var m = L.marker([lat, lng], { category: cat }).bindPopup(title);
+    m.addTo(group);
+    return m;
+}
+
+// Track in-progress geocoding to prevent concurrent updates on same layer
+const processingLayers = {};
+
+function addEventsToDayLayer(date, events) {
+    if (!date || !Array.isArray(events)) {
+        console.warn('[MapIframe] addEventsToDayLayer called with invalid args');
+        return;
+    }
+
+    // If this date is already being processed, skip to avoid duplicates
+    if (processingLayers[date]) {
+        console.debug('[MapIframe] already processing events for', date, '- skipping to avoid duplicates');
+        return;
+    }
+
+    processingLayers[date] = true;
+    console.debug('[MapIframe] addEventsToDayLayer START', { date, eventCount: events.length });
+    
+    const layer = getDayLayer(date);
+
+    // Show only the selected day's event layer to avoid cross-day visual mixing.
+    Object.keys(dayLayers).forEach(dayKey => {
+        if (dayKey !== date && map.hasLayer(dayLayers[dayKey])) {
+            map.removeLayer(dayLayers[dayKey]);
+        }
+    });
+    
+    // CRITICAL: fully clear the layer (including all cached data)
+    layer.clearLayers();
+    console.debug('[MapIframe] layer cleared:', date);
+
+    // Only show debug marker if there are no events
+    if (events.length === 0) {
+        console.debug('[MapIframe] no events, showing empty marker');
+        L.circleMarker(map.getCenter(), { radius: 10, color: '#ff0000', weight: 2, fillOpacity: 0.3 })
+            .bindPopup(`Day: ${date} (no events)`)
+            .addTo(layer);
+        processingLayers[date] = false;
+        return;
+    }
+
+    let completedCount = 0;
+    let skippedCount = 0;
+
+    // Process geocoding sequentially to avoid rate limiting
+    const processEvent = (index) => {
+        if (index >= events.length) {
+            console.debug('[MapIframe] finished processing all', events.length, 'events for', date, '| added:', completedCount, '| skipped:', skippedCount);
+            processingLayers[date] = false;  // Mark as complete
+            return;
+        }
+
+        const evt = events[index];
+        if (!evt || !evt.address) {
+            console.debug('[MapIframe] skipping event at', index, '- no address');
+            processEvent(index + 1);
+            return;
+        }
+
+        console.debug('[MapIframe] processing event', index + 1, 'of', events.length, ':', evt.address);
+
+        geocodeAddress(evt.address).then(coords => {
+            const cat = evt.category || 'default';
+            if (coords) {
+                console.debug('[MapIframe] geocoded successfully:', evt.address, coords);
+                const marker = createEventMarker(coords.lat, coords.lng, evt.title || evt.address, cat, layer);
+                marker.bindPopup(`<strong>${evt.title}</strong><br>${evt.address}`);
+                completedCount++;
+            } else {
+                console.warn('[MapIframe] geocode failed, skipping marker for:', evt.address);
+                skippedCount++;
+            }
+            // Process next event
+            processEvent(index + 1);
+        }).catch((err) => {
+            console.error('[MapIframe] geocode error for:', evt.address, err);
+            skippedCount++;
+            // Process next event
+            processEvent(index + 1);
+        });
+    };
+
+    // Start sequential processing
+    processEvent(0);
+
+    // Ensure this day layer is visible when selected
+    if (!map.hasLayer(layer)) {
+        console.debug('[MapIframe] adding layer to map:', date);
+        layer.addTo(map);
+    }
+    
+    console.debug('[MapIframe] addEventsToDayLayer END');
+}
+
+function setAllEventsLayer(events) {
+    const allLayer = getDayLayer('All Events');
+    allLayer.clearLayers();
+    events.forEach(evt => {
+        if (!evt.address) return;
+        geocodeAddress(evt.address).then(coords => {
+            if (!coords) return;
+            const cat = evt.category || 'default';
+            createEventMarker(coords.lat, coords.lng, evt.title || evt.address, cat, allLayer);
+        });
+    });
+}
+
+function showMarkersForDate(date) {
+    if (!date) return;
+    console.debug('[MapIframe] showMarkersForDate', date);
+
+    const layer = getDayLayer(date);
+    if (!map.hasLayer(layer)) {
+        layer.addTo(map);
+    }
+
+    const bounds = layer.getBounds();
+    if (bounds.isValid && bounds.isValid()) {
+        map.flyToBounds(bounds, { padding: [50, 50], duration: 0.7 });
+    }
+}
+
+// Example markers (these are placeholders; real data should come from the calendar list)
+// createEventMarker(...)
+
+// 6. Add layers to map initially (LayerSupport will cluster them)
+theater.addTo(map);
+community.addTo(map);
+music.addTo(map);
+WestCambridge.addTo(map);
+
+// 7. ADD THE LAYER CONTROL UI (The checkboxes)
+var overlayMaps = {
+    "Theater Events": theater,
+    "Community Events": community,
+    "Music Events": music,
+    "West Cambridge": WestCambridge
+};
+window.dayLayerControl = L.control.layers(null, overlayMaps, { collapsed: false }).addTo(map);
+
+// 8. THE INTEGRATED SEARCH FILTER / DAY SELECTION
+// Single consolidated message listener to prevent duplicate processing
+let lastProcessedEvent = null;
+
+window.addEventListener('message', function(e) {
+    console.debug('[MapIframe] message received', e.data);
+    if (!e.data) return;
+
+    // Prevent processing the same event twice
+    if (lastProcessedEvent && JSON.stringify(lastProcessedEvent) === JSON.stringify(e.data)) {
+        console.debug('[MapIframe] skipping duplicate event');
+        return;
+    }
+    lastProcessedEvent = e.data;
+
+    if (e.data.action === 'filter-layers') {
+        const query = e.data.keyword.toLowerCase();
+        const mapDiv = document.getElementById('mapid');
+
+        const layerMap = {
+            'theater': theater,
+            'music': music,
+            'community': community,
+            'west': WestCambridge
+        };
+
+        let activeMarkers = [];
+
+        Object.keys(layerMap).forEach(key => {
+            const layer = layerMap[key];
+            const isMatch = key.includes(query) || query === "";
+
+            if (isMatch) {
+                // mcgLayerSupportGroup automatically clusters/unclusters these
+                if (!map.hasLayer(layer)) layer.addTo(map); 
+                layer.eachLayer(m => activeMarkers.push(m));
+            } else {
+                map.removeLayer(layer);
+            }
+        });
+
+        // 9. VISUAL "APPARENCY" MODE
+        // If searching, dim the background and zoom to specific results
+        setTimeout(function() {
+            map.invalidateSize();
+
+            if (query !== "" && activeMarkers.length > 0) {
+                const bounds = L.featureGroup(activeMarkers).getBounds();
+                map.flyToBounds(bounds, { padding: [50, 50], duration: 1.2 });
+                document.getElementById('mapid').classList.add('map-highlight-active');
+            } else {
+                document.getElementById('mapid').classList.remove('map-highlight-active');
+            }
+        }, 500); // 500ms matches the CSS transition time
+
+    } else if (e.data.action === 'select-day') {
+        showMarkersForDate(e.data.date);
+    } else if (e.data.action === 'set-all-events') {
+        setAllEventsLayer(e.data.events || []);
+    } else if (e.data.action === 'set-day-events') {
+        console.debug('[MapIframe] processing set-day-events for', e.data.date, 'with', e.data.events.length, 'events');
+        addEventsToDayLayer(e.data.date, e.data.events || []);
+    } else if (e.data.action === 'sync-resize-fly') {
+        // Also handle search/fly requests in the same listener
+        const vc = e.data.vc;
+        if (vc) {
+            console.log("Searching for:", vc);
+            runSearch(vc);
+        }
+    }
+});
+
+// Store the layer so we can find Davis Square later
+// #SILAS - CHANGE THIS TO the cambridgeSomervilleNeighborhoods
+// -- replacing somervilleNeighborhoods
+const neighborhoodLayer = L.geoJSON(cambridgeSomervilleNeighborhoods, {
+    label: l => l.feature.properties.NAME,
+    labelPos: 'cc',
+    labelStyle: { color: 'red', fontWeight: 'bold', whiteSpace: 'normal', minWidth: '120px', textAlign: 'center' },
+    labelPriority: 5e4,
+    style: polyColor
+}).addTo(map).bindPopup(l => `<b>${l.feature.properties.NAME}</b>`);
+
+// Source - https://stackoverflow.com/a/25806894
+// Posted by StudioTime, modified by community. See post 'Timeline' for change history
+// Retrieved 2026-03-02, License - CC BY-SA 3.0
+
+
+var region;
+
+// 2. Load Neighborhoods
+fetch('./somervilleNeighborhoods (2).geo.json') 
+    .then(response => response.json())
+    .then(data => {
+        region = L.geoJSON(data, {
+            style: { color: 'blue', weight: 2, fillOpacity: 0.1 }
+        }).addTo(map);
+    });
+
+function runSearch(combinedData) {
+    if (!region || !combinedData) return;
+
+    const parts = combinedData.split(" | ");
+    const vTitle = parts[0];   
+    const vAddress = parts[1]; 
+
+    let searchQuery = vAddress;
+    if (!searchQuery.toLowerCase().includes("ma")) searchQuery += ", MA";
+
+    const provider = new window.GeoSearch.OpenStreetMapProvider({
+        params: {
+            countrycodes: 'us',
+            limit: 1
+        }
+    });
+
+    setGeocodeDebug(`searching: ${searchQuery}`);
+
+    provider.search({ query: searchQuery }).then(results => {
+        if (results.length === 0) {
+            console.warn("Geosearch failed for address:", searchQuery);
+            return;
+        }
+
+        const result = results[0]; 
+        const latlng = L.latLng(result.y, result.x);
+
+        // SYNC: Handles CSS expansion before flight
+        map.options.zoomSnap = 0; 
+        map.options.zoomDelta = 0.1;
+
+        let startTime = performance.now();
+        function syncExpansion(now) {
+            map.invalidateSize({ animate: false, pan: false });
+            if (map._renderer) map._renderer._update();
+            if (now - startTime < 600) {
+                requestAnimationFrame(syncExpansion);
+            } else {
+                map.invalidateSize();
+                startLiquidFlight(latlng, vTitle, vAddress);
+            }
+        }
+        requestAnimationFrame(syncExpansion);
+    });
+}
+
+function startLiquidFlight(latlng, vTitle, vAddress) {
+    let targetLayer = null;      
+    
+    // Find the neighborhood (Ray-Casting)
+    region.eachLayer(function(layer) {
+        if (targetLayer) return; 
+        if (isMarkerInsidePolygon(latlng, layer)) {
+            targetLayer = layer; 
+            console.log("Success! Found neighborhood:", layer.feature.properties.NAME);
+        }
+    });
+
+    // 1. ALWAYS Create the Marker immediately
+    const marker = L.circleMarker(latlng, {
+        radius: 8,
+        color: 'orange',
+        fillColor: '#ff7800',
+        fillOpacity: 0.8,
+        weight: 2
+    }).addTo(map);
+
+    if (targetLayer) {
+        // CASE: INSIDE NEIGHBORHOOD
+        const nName = targetLayer.feature.properties.NAME;
+        const requestedId = targetLayer.feature.properties.OBJECTID; 
+
+        // Set Popup with Neighborhood Name
+        marker.bindPopup(`<strong>${nName}</strong><br>${vTitle}<br>${vAddress}`).openPopup();
+
+        // LIQUID FLIGHT: Smooth, slow transition to neighborhood bounds
+        map.flyToBounds(targetLayer.getBounds(), {
+            padding: [40, 40],
+            duration: 3.0,       // Slower for cinematic feel
+            easeLinearity: 0.08,  // Very fluid, soft stop
+            noMoveStart: true
+        });
+
+        // 2. D3 CLICK TRIGGER: Mid-flight (1.8s) for "Liquid" interaction
+        setTimeout(() => {
+            const d3Target = d3.selectAll("path.neighborhood")
+                .filter(d => d && d.properties && d.properties.OBJECTID === requestedId);
+            
+            if (!d3Target.empty()) {
+                const node = d3Target.node();
+                const handler = d3.select(node).on('click');
+                if (handler) {
+                    // Visual cue: temporary pulse or highlight
+                    d3.select(node).transition().duration(500).style("fill-opacity", 0.5);
+                    handler.call(node, d3.select(node).datum());
+                }
+            }
+        }, 1800); 
+
+    } else {
+        // CASE: OUTSIDE (Near boundary)
+        console.warn("No neighborhood found for this point.");
+        marker.bindPopup(`<strong>${vTitle}</strong><br>${vAddress}<br><em>(Near boundary)</em>`).openPopup();
+        
+        map.flyTo(latlng, 17, { 
+            duration: 2.5,
+            easeLinearity: 0.1 
+        });
+    }
+}
+
+// 5. Robust Point-in-Polygon (Ray-Casting) Math
+function isMarkerInsidePolygon(latlng, poly) {
+    const x = latlng.lat, y = latlng.lng;
+    const json = poly.toGeoJSON();
+    const type = json.geometry.type;
+    const coords = json.geometry.coordinates;
+
+    function checkRing(ring) {
+        let inside = false;
+        for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+            const xi = ring[i][1], yi = ring[i][0]; // [Lat, Lng]
+            const xj = ring[j][1], yj = ring[j][0];
+            const intersect = ((yi > y) !== (yj > y)) &&
+                (x < ((xj - xi) * (y - yi) / (yj - yi) + xi));
+            if (intersect) inside = !inside;
+        }
+        return inside;
+    }
+
+    if (type === "Polygon") return checkRing(coords[0]);
+    if (type === "MultiPolygon") return coords.some(p => checkRing(p[0]));
+    return false;
+}
+
+
+
+</script>
+</body>
+</html>

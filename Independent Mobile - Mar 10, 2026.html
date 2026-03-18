@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Independent Mobile - Mar 10, 2026</title>
+    <style>
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { 
+            margin: 0; padding: 0; background-color: #E5E5E5; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex; justify-content: center; height: 100vh; overflow: hidden;
+        }
+
+        .mobile-viewport {
+            width: 100vw; max-width: 420px; height: 100vh;
+            background: white; display: flex; flex-direction: column; overflow: hidden;
+        }
+
+        /* 1. HEADER */
+        .header-branding {
+            text-align: center; border-bottom: 1px solid #ddd;
+            padding: 12px; padding-top: calc(10px + env(safe-area-inset-top));
+            background: white; flex-shrink: 0;
+        }
+        .logo-red {
+            background: #D2232A; color: white; font-family: 'Impact', sans-serif;
+            font-size: 26px; padding: 4px 18px; display: inline-block; text-transform: uppercase;
+        }
+
+        /* 2. ENLARGED EVENT AREA (60% Vertical Space) */
+        .main-body-split {
+            flex: 1.5; /* Gives Events more "Real Estate" than the calendar */
+            display: flex;
+            border-bottom: 3px solid #D2232A;
+            overflow: hidden; 
+            background: #fff;
+        }
+
+        .left-col-scroll, .right-col-scroll {
+            overflow-y: scroll; -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .left-col-scroll::-webkit-scrollbar, .right-col-scroll::-webkit-scrollbar {
+            display: none; 
+        }
+
+        .left-col-scroll { width: 155px; background: #fcfcfc; border-right: 1px solid #eee; }
+        .right-col-scroll { flex: 1; background: #fff; }
+
+        .inner-col { padding: 15px 12px; }
+
+        /* EVENT CHIPS (Bigger & More Visible) */
+        .date-header { font-size: 11px; font-weight: 900; color: #aaa; text-align: center; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
+        
+        .event-chip {
+            background: #fff; border-left: 5px solid #D2232A; padding: 12px 10px;
+            margin-bottom: 12px; border-radius: 0 6px 6px 0; font-size: 12px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.05); border: 1px solid #eee; border-left: 5px solid #D2232A;
+        }
+        .event-chip b { display: block; color: #000; margin-bottom: 4px; text-transform: uppercase; font-size: 11px; line-height: 1.1;}
+        .event-chip span { color: #D2232A; font-weight: 800; font-size: 11px; }
+
+        .poster-box { width: 100%; height: 130px; background: #000; border-radius: 6px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 11px; font-weight: bold;}
+
+        /* 3. COMPACT CALENDAR (Fixed at Bottom) */
+        .fixed-calendar {
+            flex: 1; /* Takes up less space than events */
+            background: white; display: flex; flex-direction: column;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        .month-header { background: #D2232A; color: white; padding: 8px 15px; font-family: serif; font-size: 20px; font-weight: bold; }
+        
+        .day-labels {
+            display: grid; grid-template-columns: repeat(7, 1fr);
+            text-align: center; font-size: 11px; font-weight: bold; color: #888;
+            padding: 8px 0; background: #fafafa; border-bottom: 1px solid #eee;
+        }
+
+        .calendar-grid {
+            display: grid; grid-template-columns: repeat(7, 1fr);
+            flex: 1; background: #fff;
+        }
+        .day {
+            border-right: 1px solid #f9f9f9; border-bottom: 1px solid #f9f9f9;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: 600; font-family: serif; color: #333;
+        }
+        .today-circle {
+            background: #D2232A; color: white;
+            width: 32px; height: 32px; display: flex; align-items: center;
+            justify-content: center; border-radius: 50%; font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="mobile-viewport">
+    <header class="header-branding">
+        <div class="logo-red">Independent</div>
+    </header>
+
+    <main class="main-body-split">
+        <!-- LEFT: TODAY'S LIST (Now wider and taller) -->
+        <section class="left-col-scroll">
+            <div class="inner-col">
+                <div class="date-header">Tue Mar 10</div>
+                <div class="event-chip"><b>Tibetan Uprising</b><span>9:00 AM</span><br>Town Hall</div>
+                <div class="event-chip"><b>Book Club</b><span>6:00 PM</span><br>UMass</div>
+                <div class="event-chip"><b>SHINE Counseling</b><span>9:00 AM</span><br>Bangs Center</div>
+                <div class="event-chip"><b>Dance w/ PD</b><span>10:30 AM</span><br>Glass Room</div>
+                <div class="event-chip"><b>Trivia Night</b><span>8:00 PM</span><br>The Local</div>
+                <div style="height: 60px;"></div> 
+            </div>
+        </section>
+
+        <!-- RIGHT: SELECTED DETAIL (More vertical room) -->
+        <section class="right-col-scroll">
+            <div class="inner-col">
+                <div class="poster-box">[SELECTED EVENT]</div>
+                <b style="font-size: 18px; color: #000; letter-spacing: -0.5px;">The Moderate</b><br>
+                <span style="font-size: 12px; color: #D2232A; font-weight: 800;">content moderator</span>
+                <p style="font-size: 13px; line-height: 1.6; color: #333; margin-top: 12px;">
+                    Frank accepts a job as a content moderator during the pandemic lockdown. 
+                    As he evaluates a never-ending stream of content, the work takes a toll until he sees a chance to help a stranger.
+                    <br><br>
+                    <i>This description now has more room to breathe. Swipe up to read the full summary.</i>
+                </p>
+                <div style="height: 80px;"></div> 
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER: CALENDAR -->
+    <footer class="fixed-calendar">
+        <div class="month-header">March 2026</div>
+        <div class="day-labels">
+            <div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div>
+        </div>
+        <div class="calendar-grid">
+            <script>
+                // Render full month
+                for (let i = 1; i <= 31; i++) {
+                    let dayContent = (i === 10) ? `<div class="today-circle">${i}</div>` : i;
+                    document.write(`<div class="day">${dayContent}</div>`);
+                }
+            </script>
+        </div>
+    </footer>
+</div>
+
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+</body>
+</html>
+        

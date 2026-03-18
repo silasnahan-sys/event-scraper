@@ -1,0 +1,15 @@
+{
+"type": "FeatureCollection",
+"name": "venues",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "ksh_ref": null, "name": "star market", "place": "grocery", "population": 24000, "postal_code": null }, "geometry": { "type": "Point", "coordinates": [ 42.38985, -71.1185 ] } },
+{ "type": "Feature", "properties": { "ksh_ref": null, "name": "pemberton", "place": "grocery", "population": 30000, "postal_code": null }, "geometry": { "type": "Point", "coordinates": [ 42.39392, -71.125408 ] } },
+{ "type": "Feature", "properties": { "ksh_ref": null, "name": "ramen o bowl", "place": "restaurant", "population": 55000, "postal_code": null }, "geometry": { "type": "Point", "coordinates": [ 42.381935, -71.120084 ] } },
+{ "type": "Feature", "properties": { "ksh_ref": null, "name": "jacks gas", "place": "gas-station", "population": 14000, "postal_code": null }, "geometry": { "type": "Point", "coordinates": [ 42.399784, -71.133761 ] } },
+{ "type": "Feature", "properties": { "ksh_ref": null, "name": "229 Harvard", "place": "residence", "population": 25000, "postal_code": null }, "geometry": { "type": "Point", "coordinates": [ 42.367843, -71.099929 ] } },
+{ "type": "Feature", "properties": { "ksh_ref": null, "name": "26 Murray Hill", "place": "residence", "population": 32000, "postal_code": null }, "geometry": { "type": "Point", "coordinates": [ 42.401424, -71.13354 ] } },
+{ "type": "Feature", "properties": { "ksh_ref": null, "name": "Cantab Lounge", "place": "music-venue", "population": 66000, "postal_code": "2649" }, "geometry": { "type": "Point", "coordinates": [ 42.366126, -71.105291 ] } },
+{ "type": "Feature", "properties": { "ksh_ref": null, "name": "Harvard Book Store", "place": "book-store", "population": 55000, "postal_code": null }, "geometry": { "type": "Point", "coordinates": [42.372541, -71.116363 ] } }
+]
+}

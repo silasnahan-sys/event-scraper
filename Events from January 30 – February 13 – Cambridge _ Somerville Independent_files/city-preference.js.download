@@ -1,0 +1,433 @@
+/**
+ * City Preference System
+ * Handles user preference selection and content filtering with real-time updates
+ */
+(function() {
+    'use strict';
+
+    // Current preference state
+    let currentPreference = null;
+    let isSettingPreference = false;
+
+    /**
+     * Get current preference from cookie or localStorage
+     */
+    function getCurrentPreference() {
+        // Check cookie first
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.startsWith('ci_city_preference=')) {
+                return cookie.substring('ci_city_preference='.length);
+            }
+        }
+        
+        // Fallback to localStorage
+        return localStorage.getItem('ci_city_preference') || 'all';
+    }
+
+    /**
+     * Update visual indicators in hamburger menu
+     */
+    function updateVisualIndicators(preference) {
+        // Remove highlight from all city preference items
+        const allItems = document.querySelectorAll('.hamburger-menu-city-preference');
+        allItems.forEach(function(item) {
+            item.classList.remove('active', 'hamburger-menu-highlight');
+        });
+        
+        // Add highlight to active preference
+        const activeItem = document.querySelector('.hamburger-menu-city-preference[data-preference="' + preference + '"]');
+        if (activeItem) {
+            activeItem.classList.add('active', 'hamburger-menu-highlight');
+        }
+    }
+
+    /**
+     * Show loading state
+     */
+    function showLoadingState(preference) {
+        const activeItem = document.querySelector('.hamburger-menu-city-preference[data-preference="' + preference + '"]');
+        if (activeItem) {
+            activeItem.style.opacity = '0.6';
+            activeItem.style.pointerEvents = 'none';
+            activeItem.setAttribute('data-loading', 'true');
+        }
+    }
+
+    /**
+     * Hide loading state
+     */
+    function hideLoadingState() {
+        const loadingItems = document.querySelectorAll('.hamburger-menu-city-preference[data-loading="true"]');
+        loadingItems.forEach(function(item) {
+            item.style.opacity = '';
+            item.style.pointerEvents = '';
+            item.removeAttribute('data-loading');
+        });
+    }
+
+    /**
+     * Close hamburger menu
+     */
+    function closeHamburgerMenu() {
+        const hamburgerOverlay = document.querySelector('.hamburger-menu-overlay');
+        const menuToggleWrappers = document.querySelectorAll('.menu-toggle-wrapper');
+        
+        if (hamburgerOverlay) {
+            hamburgerOverlay.classList.remove('active');
+        }
+        
+        menuToggleWrappers.forEach(function(wrapper) {
+            wrapper.classList.remove('active');
+        });
+        
+        // Reset body overflow
+        document.body.style.overflow = '';
+    }
+
+    /**
+     * Set city preference via AJAX
+     */
+    function setCityPreference(preference) {
+        // Prevent multiple simultaneous requests
+        if (isSettingPreference) {
+            console.log('Already setting preference, ignoring duplicate request');
+            return;
+        }
+        
+        isSettingPreference = true;
+        console.log('Setting city preference:', preference);
+        
+        // Show loading state
+        showLoadingState(preference);
+        
+        // Check if ciCityPreference object is available
+        if (typeof ciCityPreference === 'undefined') {
+            console.error('ciCityPreference object not found!');
+            // Fallback: set cookie and redirect/reload anyway
+            const cookieString = 'ci_city_preference=' + preference + '; path=/; max-age=' + (30 * 24 * 60 * 60);
+            document.cookie = cookieString;
+            localStorage.setItem('ci_city_preference', preference);
+            currentPreference = preference;
+            updateVisualIndicators(preference);
+            hideLoadingState();
+            isSettingPreference = false;
+            
+            // Check if we're on a single post/page - redirect to homepage
+            const isSinglePost = document.body.classList.contains('single') || 
+                                document.body.classList.contains('single-post') ||
+                                document.body.classList.contains('page');
+            
+            if (isSinglePost) {
+                window.location.href = '/';
+            } else {
+                window.location.reload();
+            }
+            return;
+        }
+        
+        console.log('AJAX URL:', ciCityPreference.ajaxUrl);
+        console.log('Nonce:', ciCityPreference.nonce);
+        
+        const data = {
+            action: 'set_city_preference',
+            nonce: ciCityPreference.nonce,
+            preference: preference
+        };
+
+        // Set cookie immediately for better UX
+        const cookieString = 'ci_city_preference=' + preference + '; path=/; max-age=' + (30 * 24 * 60 * 60);
+        document.cookie = cookieString;
+        console.log('Cookie set:', cookieString);
+
+        // Also store in localStorage as backup
+        localStorage.setItem('ci_city_preference', preference);
+        console.log('LocalStorage set:', preference);
+        
+        // Update current preference
+        currentPreference = preference;
+        updateVisualIndicators(preference);
+
+        // Send AJAX request
+        fetch(ciCityPreference.ajaxUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams(data)
+        })
+        .then(response => {
+            console.log('AJAX response status:', response.status);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('AJAX response data:', data);
+            hideLoadingState();
+            isSettingPreference = false;
+            
+            if (data.success) {
+                console.log('Preference set successfully');
+                // Close hamburger menu
+                closeHamburgerMenu();
+                
+                // Check if we're on a single post/page - redirect to homepage to see filtered content
+                const isSinglePost = document.body.classList.contains('single') || 
+                                    document.body.classList.contains('single-post') ||
+                                    document.body.classList.contains('page');
+                
+                if (isSinglePost) {
+                    // Redirect to homepage to see filtered content
+                    console.log('On single post/page, redirecting to homepage...');
+                    setTimeout(function() {
+                        window.location.href = '/';
+                    }, 300);
+                } else {
+                    // Reload current page to apply filter
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 300);
+                }
+            } else {
+                console.error('Failed to set preference:', data.data);
+                // Still redirect/reload even if AJAX fails (cookie is set)
+                closeHamburgerMenu();
+                const isSinglePost = document.body.classList.contains('single') || 
+                                    document.body.classList.contains('single-post') ||
+                                    document.body.classList.contains('page');
+                
+                if (isSinglePost) {
+                    setTimeout(function() {
+                        window.location.href = '/';
+                    }, 300);
+                } else {
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 300);
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error setting preference:', error);
+            hideLoadingState();
+            isSettingPreference = false;
+            // Still redirect/reload even if AJAX fails (cookie is set)
+            console.log('Reloading/redirecting anyway (cookie is set)...');
+            closeHamburgerMenu();
+            
+            const isSinglePost = document.body.classList.contains('single') || 
+                                document.body.classList.contains('single-post') ||
+                                document.body.classList.contains('page');
+            
+            if (isSinglePost) {
+                setTimeout(function() {
+                    window.location.href = '/';
+                }, 300);
+            } else {
+                setTimeout(function() {
+                    window.location.reload();
+                }, 300);
+            }
+        });
+    }
+
+    /**
+     * Handle city preference click
+     */
+    function handleCityPreferenceClick(e) {
+        const cityPreferenceLink = e.target.closest('.hamburger-menu-city-preference');
+        
+        if (!cityPreferenceLink) {
+            return;
+        }
+        
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const preference = cityPreferenceLink.getAttribute('data-preference');
+        console.log('City preference clicked:', preference);
+        
+        if (!preference) {
+            console.error('No preference attribute found');
+            return;
+        }
+        
+        // Don't do anything if clicking the same preference
+        if (preference === currentPreference) {
+            console.log('Same preference selected, ignoring');
+            closeHamburgerMenu();
+            return;
+        }
+        
+        // Set preference via AJAX
+        setCityPreference(preference);
+    }
+
+    /**
+     * Initialize city preference handlers
+     */
+    function initCityPreference() {
+        // Get current preference
+        currentPreference = getCurrentPreference();
+        console.log('Current preference:', currentPreference);
+        
+        // Update visual indicators
+        updateVisualIndicators(currentPreference);
+        
+        // Use event delegation on hamburger menu container
+        const hamburgerOverlay = document.querySelector('.hamburger-menu-overlay');
+        const hamburgerContent = document.querySelector('.hamburger-menu-content');
+        const menuContainer = hamburgerContent || hamburgerOverlay || document.body;
+        
+        // Remove any existing listeners to prevent duplicates
+        if (menuContainer._cityPreferenceHandler) {
+            menuContainer.removeEventListener('click', menuContainer._cityPreferenceHandler);
+        }
+        
+        // Create handler function
+        menuContainer._cityPreferenceHandler = handleCityPreferenceClick;
+        
+        // Add event listener with delegation
+        menuContainer.addEventListener('click', menuContainer._cityPreferenceHandler);
+        
+        // Also attach direct listeners for existing elements (for immediate feedback)
+        const cityPreferenceLinks = document.querySelectorAll('.hamburger-menu-city-preference');
+        console.log('City preference links found:', cityPreferenceLinks.length);
+        
+        cityPreferenceLinks.forEach(function(link) {
+            // Remove existing listener if any
+            if (link._cityPreferenceDirectHandler) {
+                link.removeEventListener('click', link._cityPreferenceDirectHandler);
+            }
+            
+            // Create handler
+            link._cityPreferenceDirectHandler = handleCityPreferenceClick;
+            
+            // Add listener
+            link.addEventListener('click', link._cityPreferenceDirectHandler);
+        });
+        
+        // Re-initialize when hamburger menu opens (for dynamically loaded content)
+        const menuToggles = document.querySelectorAll('.menu-toggle');
+        menuToggles.forEach(function(toggle) {
+            toggle.addEventListener('click', function() {
+                // Small delay to ensure menu is rendered
+                setTimeout(function() {
+                    const links = document.querySelectorAll('.hamburger-menu-city-preference');
+                    links.forEach(function(link) {
+                        if (!link._cityPreferenceDirectHandler) {
+                            link._cityPreferenceDirectHandler = handleCityPreferenceClick;
+                            link.addEventListener('click', link._cityPreferenceDirectHandler);
+                        }
+                    });
+                    // Update visual indicators
+                    currentPreference = getCurrentPreference();
+                    updateVisualIndicators(currentPreference);
+                }, 100);
+            });
+        });
+    }
+
+    /**
+     * Sync localStorage with cookie on page load
+     */
+    function syncPreferenceStorage() {
+        const storedPreference = localStorage.getItem('ci_city_preference');
+        const cookiePreference = getCurrentPreference();
+        
+        // If localStorage exists but cookie doesn't, sync cookie
+        if (storedPreference && !document.cookie.includes('ci_city_preference=')) {
+            const cookieString = 'ci_city_preference=' + storedPreference + '; path=/; max-age=' + (30 * 24 * 60 * 60);
+            document.cookie = cookieString;
+            console.log('Synced cookie from localStorage:', storedPreference);
+        }
+        
+        // If cookie exists but localStorage doesn't, sync localStorage
+        if (cookiePreference && cookiePreference !== 'all' && !storedPreference) {
+            localStorage.setItem('ci_city_preference', cookiePreference);
+            console.log('Synced localStorage from cookie:', cookiePreference);
+        }
+    }
+
+    /**
+     * Auto-detect and set preference on first visit
+     */
+    function autoDetectAndSetPreference() {
+        // Check if this is first visit (no cookie and no localStorage, or both are 'all')
+        const cookiePreference = getCurrentPreference();
+        const isFirstVisit = (cookiePreference === 'all' || !cookiePreference);
+        
+        // Check if we've already tried to auto-detect (prevent multiple attempts)
+        const autoDetectAttempted = sessionStorage.getItem('ci_auto_detect_attempted');
+        
+        if (isFirstVisit && !autoDetectAttempted && typeof ciCityPreference !== 'undefined') {
+            console.log('First visit detected, auto-detecting preference...');
+            sessionStorage.setItem('ci_auto_detect_attempted', 'true');
+            
+            // Get detected preference from server
+            const data = {
+                action: 'get_detected_preference',
+                nonce: ciCityPreference.nonce
+            };
+            
+            fetch(ciCityPreference.ajaxUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Auto-detected preference:', data);
+                if (data.success && data.data.preference && data.data.preference !== 'all') {
+                    const detectedPreference = data.data.preference;
+                    console.log('Auto-setting detected preference:', detectedPreference);
+                    // Set preference automatically (without user interaction)
+                    setCityPreference(detectedPreference);
+                } else {
+                    console.log('No specific preference detected, keeping default "all"');
+                }
+            })
+            .catch(error => {
+                console.error('Error auto-detecting preference:', error);
+                // Don't show error to user, just keep default 'all'
+            });
+        }
+    }
+
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            syncPreferenceStorage();
+            initCityPreference();
+            // Auto-detect on first visit (after a small delay to ensure everything is loaded)
+            setTimeout(function() {
+                autoDetectAndSetPreference();
+            }, 500);
+        });
+    } else {
+        // DOM is already ready
+        syncPreferenceStorage();
+        initCityPreference();
+        // Auto-detect on first visit (after a small delay to ensure everything is loaded)
+        setTimeout(function() {
+            autoDetectAndSetPreference();
+        }, 500);
+    }
+
+    // Re-initialize on window load (for any late-loading content)
+    window.addEventListener('load', function() {
+        syncPreferenceStorage();
+        currentPreference = getCurrentPreference();
+        updateVisualIndicators(currentPreference);
+    });
+})();

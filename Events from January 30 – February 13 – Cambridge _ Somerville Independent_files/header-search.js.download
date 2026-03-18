@@ -1,0 +1,50 @@
+document.addEventListener("DOMContentLoaded", function () {
+
+    const searchIcons = document.querySelectorAll(".search-icon");
+    const desktopSearch = document.querySelector(".header-search-index");
+    const closeButtons = document.querySelectorAll(".search-close-button");
+    const inputFocus = document.getElementsByClassName("active");
+    const siteNavigation = document.querySelector('#site-navigation');
+
+    if (searchIcons.length && desktopSearch) {
+
+        searchIcons.forEach(function(icon) {
+
+            icon.addEventListener("click", function (e) {
+                e.preventDefault();
+
+                desktopSearch.classList.toggle("active");
+                if (siteNavigation) {
+                    siteNavigation.classList.toggle("search-active");
+                } else {
+                  console.warn('No site navigation found');
+                }
+
+                if (desktopSearch.classList.contains("active")) {
+                    const input = desktopSearch.querySelector(".search-field");
+                }
+
+            });
+
+        });
+
+    }
+
+    // Handle close button clicks
+    if (closeButtons.length && desktopSearch) {
+        closeButtons.forEach(function(closeButton) {
+            closeButton.addEventListener("click", function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                desktopSearch.classList.remove("active");
+                if (siteNavigation) {
+                    siteNavigation.classList.remove("search-active");
+                } else {
+                  console.warn('No site navigation found');
+                }
+            });
+        });
+    }
+
+});

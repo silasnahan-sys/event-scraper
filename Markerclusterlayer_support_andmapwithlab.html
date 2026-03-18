@@ -1,0 +1,271 @@
+<!doctype html>
+<html>
+    <head>
+        <title>LEAFLET MAP WITH LABELS - Map class supporting labels for Leaflet</title>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>       
+		        <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+        <link rel="stylesheet" href="./leaflet-mapwithlabels.css" />
+		<script src="./leaflet-mapwithlabels.js"></script>
+		      <link rel="stylesheet" href="./leaflet.awesome-markers.css">
+           <link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.css" rel="stylesheet">
+  <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+		<style>
+    /* NO FIXED PIXELS: Must be 100% to follow the iframe */
+      html, body, #map_div {
+    height: 100% !important;
+    width: 100% !important;
+    margin: 0;
+    padding: 0;
+    -webkit-backface-visibility: hidden; /* Fixes "shimmer" on some browsers */
+}   
+
+/* Add this to your map page styles */
+.leaflet-zoom-animated {
+    display: block !important; /* Forces the SVG layer to stay rendered */
+}
+
+
+.leaflet-tile-container {
+    transition: opacity 0.2s linear; /* Makes tile loading less jarring */
+}
+
+
+/* Ensure the labels and polygons stay on the same rendering plane */
+.leaflet-pane {
+    z-index: 400;
+}
+
+/* Prevents the SVG renderer from clipping polygons during a resize */
+/* Force the SVG container to always fill the available space */
+/* Force the SVG container to fill the 100% space of the expanded iframe */
+.s{
+    width: 100% !important;
+    height: 100% !important;
+    transform-origin: 0 0 !important;
+    overflow: visible !important;
+}
+
+/* Ensure labels don't "stutter" during the move */
+.leaflet-label {
+    will-change: transform, top, left;
+    transition: none !important;
+}
+/* Ensure the path (polygon) doesn't disappear or flicker */
+/* Keep the polygon fill stable */
+path.leaflet-interactive {
+    /* Prevents borders from getting thick and overlapping during zoom */
+    vector-effect: non-scaling-stroke !important;
+    stroke-width: 1px !important; 
+}
+
+        </style>
+<link rel="stylesheet" href="./MarkerCluster.css" />
+	<link rel="stylesheet" href="./MarkerCluster.Default.css" />
+	<script src="./leaflet.markercluster-src.js"></script>
+        <!-- #SILAS <script src="./leaflet.markercluster.freezable.js"></script> -->
+        <!-- After Leaflet script -->
+        <script src="https://unpkg.com/leaflet.markercluster.freezable@1.0.0/dist/leaflet.markercluster.freezable.js"></script>
+
+    <!-- #SILAS This looks like the wrong file name to me -->
+           <!-- <script src="./LDeflate (1).js"></script> -->
+    <!-- #SILAS use the online version -- this is from the github site -->
+    <script src="https://unpkg.com/Leaflet.Deflate/dist/L.Deflate.js"></script>
+      <script src="./leaflet.awesome-markers.js"></script>
+    <!-- #SILAS I couldn't find the local version so I'm using the online version below -->
+    <!-- <script src="./leaflet.markercluster.layersupport.js"></script> -->
+    <!-- After Leaflet and Leaflet.markercluster scripts -->
+    <script src="https://unpkg.com/leaflet.markercluster.layersupport@2.0.1/dist/leaflet.markercluster.layersupport.js"></script>
+
+    </head>
+    <body>
+		<div id="map_div"></div>
+		      <script src="./BOUNDARY_CDDNeighborhoods_geojson.js"></script>
+        <script src="./somervilleNeighborhoods-geojson.js"></script>
+        <script src="L.D3SvgOverlay.min.js"></script>
+
+		<script>
+            const map = L.mapWithLabels('map_div').fitBounds([[42.353813, -71.102608], [42.419111, -71.121319
+
+]]);
+
+const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    keepBuffer: 4,        // Keeps more tiles in memory so they don't 'blink' out
+    updateWhenIdle: true, // Wait for the move to finish before loading new tiles
+    updateWhenZooming: false, // CRITICAL: Keeps old tiles visible while flying
+    noWrap: true
+}).addTo(map);
+            function polyColor(f) {
+				let p=f.properties.Nepesseg;
+                let r=Math.random()*150+100;
+                let g=Math.random()*150+100;
+                let b=Math.random()*150+100;
+                return { fillColor: `rgb(${r},${g},${b})`, fillOpacity: .7, color: 'black', opacity: 1, weight: 1 };
+            }                  
+
+            // Cambridge
+            // statesData is the var that stores the Cambridge Data
+            L.geoJSON(cambridgeNeighborhoods, {
+                label: l=>l.feature.properties.NAME, 
+                labelPos: 'cc', 
+                labelStyle: { fontWeight: 'bold', whiteSpace: 'normal', minWidth: '120px', textAlign: 'center'},
+                labelPriority: 5e4,
+                style: polyColor
+            }).addTo(map).bindPopup(l => props(l.feature.properties));
+
+            // Somerville neighborhoods
+            L.geoJSON(somervilleNeighborhoods, {
+                label: l => l.feature.properties.NAME,
+                labelPos: 'cc',
+                labelStyle: { fontWeight: 'bold', whiteSpace: 'normal', minWidth: '120px', textAlign: 'center' },
+                labelPriority: 5e4,
+                style: polyColor
+            }).addTo(map).bindPopup(l => props(l.feature.properties));
+
+            	const info = L.control();
+
+	info.onAdd = function (map) {
+		this._div = L.DomUtil.create('div', 'info');
+		this.update();
+		return this._div;
+	};
+
+	info.update = function (props) {
+		const contents = props ? `<b>${props.NAME}</b><br />${props.density} people / mi<sup>2</sup>` : 'Hover over a neighborhood';
+		this._div.innerHTML = `<h4>Cambridge Neighborhoods</h4>${contents}`;
+		const dispname = props ? props.NAME : '';
+		const dispDistrict = props ? props.District : '';
+		console.log('props.name:', dispname,'dispDistrict:', dispDistrict);
+	};
+
+	info.addTo(map);
+	// get color depending on population density value
+	function getColor(d) {
+		return d > 1000 ? '#800026' :
+			d > 500  ? '#BD0026' :
+			d > 200  ? '#E31A1C' :
+			d > 100  ? '#FC4E2A' :
+			d > 50   ? '#FD8D3C' :
+			d > 20   ? '#FEB24C' :
+			d > 10   ? '#FED976' : '#FFEDA0';
+	}
+
+	function style(feature) {
+		return {
+			weight: 2,
+			opacity: 1,
+			color: 'white',
+			dashArray: '3',
+			fillOpacity: 0.7,
+			fillColor: getColor(feature.properties.density)
+		};
+	}
+	function resetHighlight(e) {
+		geojson.resetStyle(e.target);
+		info.update();
+	}
+
+	function zoomToFeature(e) {
+		map.fitBounds(e.target.getBounds());
+	}
+
+	function onEachFeature(feature, layer) {
+		layer.on({
+			mouseover: highlightFeature,
+			mouseout: resetHighlight,
+			click: zoomToFeature
+		});
+	}
+
+	map.attributionControl.addAttribution('Population data &copy; <a href="http://census.gov/">US Census Bureau</a>');
+
+
+	const legend = L.control({position: 'bottomright'});
+
+	legend.onAdd = function (map) {
+
+		const div = L.DomUtil.create('div', 'info legend');
+		const grades = [0, 10, 20, 50, 100, 200, 500, 1000];
+		const labels = [];
+		let from, to;
+
+		for (let i = 0; i < grades.length; i++) {
+			from = grades[i];
+			to = grades[i + 1];
+
+			labels.push(`<i style="background:${getColor(from + 1)}"></i> ${from}${to ? `&ndash;${to}` : '+'}`);
+		}
+
+		div.innerHTML = labels.join('<br>');
+		return div;
+	};
+
+	legend.addTo(map);
+
+	
+	
+	L.marker([51.941196,4.512291], {icon: L.AwesomeMarkers.icon({icon: 'spinner', prefix: 'fa', markerColor: 'red', spin:true}) }).addTo(map);
+    L.marker([42.3665694,-71.1233244], {icon: L.AwesomeMarkers.icon({icon: 'coffee', prefix: 'fa', markerColor: 'red', iconColor: '#f28f82'}) }).addTo(map);
+    L.marker([42.3741209,-71.1107166], {icon: L.AwesomeMarkers.icon({icon: 'airplane-outline', prefix: 'fa', markerColor: 'purple', iconColor: 'black'}) }).addTo(map);
+    L.marker([51.932835,4.506969], {icon: L.AwesomeMarkers.icon({icon: 'glass', prefix: 'fa', markerColor: 'green'}) }).addTo(map);
+    L.marker([51.930295,4.515209], {icon: L.AwesomeMarkers.icon({icon: 'shopping-cart', prefix: 'fa', markerColor: 'blue'}) }).addTo(map);
+    L.marker([51.930083,4.507742], {icon: L.AwesomeMarkers.icon({icon: 'info', prefix: 'fa', markerColor: 'orange'}) }).addTo(map);
+    L.marker([51.930454,4.527054], {icon: L.AwesomeMarkers.icon({icon: 'group', prefix: 'fa', markerColor: 'darkred'}) }).addTo(map);
+    L.marker([51.929607,4.527054], {icon: L.AwesomeMarkers.icon({icon: 'arrow-right', prefix: 'fa', markerColor: 'darkblue'}) }).addTo(map);
+    L.marker([51.928919,4.528856], {icon: L.AwesomeMarkers.icon({icon: 'twitter', prefix: 'fa', markerColor: 'cadetblue'}) }).addTo(map);
+    L.marker([51.930295,4.530745], {icon: L.AwesomeMarkers.icon({icon: 'phone', prefix: 'fa', markerColor: 'darkpurple'}) }).addTo(map);
+    L.marker([51.925055,4.512806], {icon: L.AwesomeMarkers.icon({icon: 'ambulance', prefix: 'fa', markerColor: 'darkgreen'}) }).addTo(map);
+    L.marker([51.925902,4.505768], {icon: L.AwesomeMarkers.icon({icon: 'medkit', prefix: 'fa', markerColor: 'darkblue'}) }).addTo(map);
+
+// Create a MarkerClusterGroup with Layer Support enabled
+var mcgLayerSupportGroup = L.markerClusterGroup.layerSupport();
+
+// Create separate layer groups for different types of markers
+var stores = L.layerGroup();
+var homes = L.layerGroup();
+var bookstores = L.layerGroup();
+
+// Check these layer groups into the MCG Layer Support
+
+mcgLayerSupportGroup.checkIn([stores, homes, bookstores]);
+
+// Add markers to their respective layer groups
+L.marker([42.38985, -71.1185]).bindPopup('StarMarket').addTo(stores);
+L.marker([42.39392, -71.125408]).bindPopup('Pemberton').addTo(stores);
+L.marker([42.367843, -71.099929]).bindPopup('229 Harvard').addTo(homes);
+L.marker([42.401424, -71.13354]).bindPopup('26 Murray Hill Road').addTo(homes);
+L.marker([42.3817724,-71.0872455]).bindPopup('All She Wrote Books').addTo(bookstores);
+L.marker([42.3812783,-71.1008173]).bindPopup('Side Quest Books & Games').addTo(bookstores);
+L.marker([42.372541, -71.116363]).bindPopup('Harvard Book Store').addTo(bookstores);
+L.marker([42.3873306,-71.1214895]).bindPopup('Porter Square Books').addTo(bookstores);
+L.marker([42.3812973,-73.5779292]).bindPopup('Bryn Mawr Bookstore').addTo(bookstores);
+L.marker([42.3738631,-71.1242451]).bindPopup('Lovestruck Books').addTo(bookstores);
+
+mcgLayerSupportGroup.addTo(map);
+
+// Add the layer groups to the map to display them (they will be clustered automatically)
+stores.addTo(map);
+homes.addTo(map);
+bookstores.addTo(map);
+
+// Add the standard Leaflet layers control
+var overlays = {
+    "Grocery Stores": stores,
+    "Homes": homes,
+    "Bookstores": bookstores
+};
+L.control.layers(null, overlays).addTo(map);
+
+var markers = L.markerClusterGroup({spiderfyOnMaxZoom: false, showCoverageOnHover: false, zoomToBoundsOnClick: false});
+markers.on('clusterclick', function (a) {
+	a.layer.zoomToBounds({padding: [60, 60]});
+});
+
+ 
+</script>
+    </body>
+</html>     
+

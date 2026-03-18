@@ -1,0 +1,10 @@
+loaded_h_0(function(_){var window=this;
+_.v("OoK5v");
+_.eM=new _.Xf(_.Yq);
+_.w();
+_.v("X1kBmd");
+_.bg(_.E2a,class extends _.ho{static Ta(){return{service:{oh:_.eM}}}constructor(a){super();this.oh=a.service.oh}prefetch(a){return this.oh.prefetch(a)}showViewerLite(a){let b,c,d,e,f;const g={bV:(b=a.getClickTimestamp)==null?void 0:b.call(a),viewerType:a.getViewerType(),modality:(c=a.getModality)==null?void 0:c.call(a),L2:a.getModalityOverride?(0,_.h4e)(a.getModalityOverride()):void 0,entrypoint:a.getEntrypoint(),interactionVed:a.getInteractionVed(),Lqa:a.getReplaceContainingViewer(),contentPluginType:a.getContentPluginType(),
+Zqa:a.getSerializedPluginData(),eIb:!((d=a.getUseDomSwipeGroup)==null||!d.call(a)),pX:a.getSerializedCloseConfig?(0,_.caf)(a.getSerializedCloseConfig()):void 0,contentId:(e=a.getContentId)==null?void 0:e.call(a),Wea:(f=a.getDisableEntrypointMorph)==null?void 0:f.call(a)};return this.oh.showViewerLite(g)}});
+_.w();
+});
+// Google Inc.
